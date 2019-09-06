@@ -23,7 +23,6 @@
                     <span> </span>
                   </span>
           </template>
-
         </el-table-column>
         <el-table-column prop="exec_time"  label="执行时间" width="170px" align="center"></el-table-column>
         <el-table-column prop="add_time"  label="创建时间" width="170px" align="center"></el-table-column>

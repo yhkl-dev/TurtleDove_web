@@ -39,6 +39,9 @@ const Playbook = () => import('@/views/task/Playbook')
 /* 巡检报告 */
 const ServerReport = () => import('@/views/report/ServerReport')
 
+/* 工单系统*/
+const WorkOrderTask = () => import('@/views/workorder/workOrderTask')
+
 export const constantRouterMap = [
   {
     path: '/login',
@@ -106,6 +109,23 @@ export const constantRouterMap = [
         component: Zabbix,
         name: 'zabbix',
         meta: { title: 'zabbix', icon: 'user' }
+      }
+    ]
+  },
+  {
+    path: '/workorder',
+    component: Layout,
+    name: '工单',
+    meta: {
+      title: '工单',
+      icon: 'order'
+    },
+    children: [
+      {
+        path: 'my_workorder',
+        component: WorkOrderTask,
+        name: '我的工单',
+        meta: { title: 'my_workorder', icon: 'order' }
       }
     ]
   },
