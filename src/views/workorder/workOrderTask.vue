@@ -1,87 +1,78 @@
 <template>
   <div class="app-container">
-    <el-row>
-      <el-input size="small">搜索内容</el-input>
-      <el-button>新建工单</el-button>
-    </el-row>
-    <el-table v-loading="loading"   element-loading-text="拼命加载中" :data="workOrderTaskList" border size="medium"
-              style="width: 100%">
-      <el-table-column prop="order_task_id" label="工单id" align="center" width="300px"></el-table-column>
-      <el-table-column prop="order_title" label="工单标题" align="center"></el-table-column>
-      <el-table-column prop="order_model" label="工单类型" align="center"></el-table-column>
-      <el-table-column prop="getWorkTaskCode(order_status)" label="工单状态" align="center"></el-table-column>
-<!--      <el-table-column  label="工单状态" align="center">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-tag>{{ getWorkTaskCode(scope.row.order_status) }}</el-tag>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-
-      <el-table-column prop="current_exec_user.username" label="当前执行用户" align="center"></el-table-column>
-      <el-table-column prop="current_audit_user.username" label="当前审核用户" align="center"></el-table-column>
-      <el-table-column prop="create_time" label="创建时间" align="center"></el-table-column>
-      <el-table-column prop="update_time" label="更新时间" align="center"></el-table-column>
-      <el-table-column label="操作" align="center">
-        <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="checkWorkOrderTaskDetail(scope.row)">查看详情</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div style="margin-top: 10px"
-         class="text-center"
-         v-show="taskTotalNum>=15">
-      <el-pagination background
-                     @current-change="paginationChange"
-                     layout="total, prev, pager, next, jumper"
-                     :current-page.sync="page"
-                     :total="taskTotalNum">
-      </el-pagination>
-    </div>
-    <el-dialog title="工单详情" :visible.sync="workOrderTaskDetailVisible" width="70%" center>
-      <work-order-detail  v-bind:workOrderDetail="workOrderDetail" @replyWorkOrderTaskForm="replyWorkOrderTaskForm"></work-order-detail>
-    </el-dialog>
+    <el-tabs type="border-card">
+      <el-tab-pane label="我的工单">
+        <my-work-order-list v-bind:workOrderTaskList="workOrderTaskList"
+                            v-bind:workOrderModelList="workOrderModelList"
+                            v-bind:taskTotalNum="taskTotalNum"
+                            v-bind:loading="loading"
+                            @handleSearchTask="handleSearchTask"
+                            @refresh="refresh"
+                            @handleCommitAddWorkOrderTask="handleCommitAddWorkOrderTask"></my-work-order-list>
+      </el-tab-pane>
+    </el-tabs>
+    <el-tabs type="border-card">
+      <el-tab-pane label="待执行工单">
+        <to-do-work-order-list v-bind:execWorkOrderTaskList="execWorkOrderTaskList"
+                               v-bind:taskToDoTotalNum="taskToDoTotalNum"
+                               v-bind:toDoListLoading="toDoListLoading"
+                               @refreshToDoList="refreshToDoList"></to-do-work-order-list>
+      </el-tab-pane>
+    </el-tabs>
+    <el-tabs type="border-card">
+      <el-tab-pane label="待审核工单">
+        <to-audit-work-order-list v-bind:auditWorkOrderTaskList="auditWorkOrderTaskList"
+                                  v-bind:auditListLoading="auditListLoading"
+                                  v-bind:auditTaskTotalNum="auditTaskTotalNum"
+                                  @auditListRefresh="auditListRefresh"></to-audit-work-order-list>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 
 </template>
 
 <script>
-  import { getWorkOrderTaskList, addWorkOrderOperation, getWorkOrderOperationCode, getWorkOrderTaskCode } from '@/api/workorder'
-  import workOrderDetail from './workOrderDetail'
+  import { getWorkOrderTaskList,
+    addWorkOrderTaskList,
+    getWorkOrderOperationCode,
+    getWorkOrderTaskCode,
+    getTemplateWorkOrderModelList,
+    getExecWorkOrderTaskList,
+    getAuditWorkOrderTaskList } from '@/api/workorder'
+  import MyWorkOrderList from './workOrders/myWorkOrderList'
+  import toDoWorkOrderList from './workOrders/toDoWorkOrderList'
+  import toAuditWorkOrderList from './workOrders/toAuditWorkOrderList'
 
   export default {
     name: 'workOrderTask',
-    components: { workOrderDetail },
+    components: { MyWorkOrderList, toDoWorkOrderList, toAuditWorkOrderList },
     data() {
       return {
+        activeName: '1',
         workOrderTaskList: [],
-        workOrderDetail: null,
         workOrderTaskCode: [],
         workOrderOperationCode: [],
-        taskTotalNum: '',
-        params: {},
+        workOrderModelList: [],
+        execWorkOrderTaskList: [],
+        auditWorkOrderTaskList: [],
+        taskTotalNum: 0,
+        taskToDoTotalNum: 0,
+        auditTaskTotalNum: 0,
         workOrderTaskDetailVisible: false,
+        workOrderTaskVisible: false,
         loading: false,
+        toDoListLoading: false,
+        auditListLoading: false,
         searchForm: {
-          task_order_id: '',
-          page: ''
-        },
-        page: ''
-      }
-    },
-    filters: {
-      statusFilter(status) {
-        const statusMap = {}
-        // this.workOrderTaskCode[0]: workOrderTaskCode[1],
-        for (var i = 0; i < this.workOrderTaskCode.length; i++) {
-          statusMap.append(this.workOrderTaskCode[i][0], this.workOrderTaskCode[i][1])
+          page: 1,
+          page_size: 5
         }
-        console.log(statusMap)
-        return statusMap[status]
       }
     },
     methods: {
       fetchData(params) {
         this.loading = true
-        getWorkOrderTaskList(params).then(
+        getWorkOrderTaskList(this.searchForm).then(
           res => {
             this.workOrderTaskList = res.results
             this.taskTotalNum = res.count
@@ -98,38 +89,79 @@
             this.workOrderOperationCode = res.code
           }
         )
+        getTemplateWorkOrderModelList(params).then(
+          res => {
+            this.workOrderModelList = res.results
+          }
+        )
       },
-      paginationChange(val) {
-        this.searchForm.page = val
-        this.fetchData(Object.assign(this.searchForm))
-      },
-      checkWorkOrderTaskDetail(row) {
-        this.workOrderTaskDetailVisible = true
-        this.workOrderDetail = row
-      },
-      getWorkTaskCode(code) {
-        const statusMap = {}
-        // this.workOrderTaskCode[0]: workOrderTaskCode[1],
-        for (var i = 0; i < this.workOrderTaskCode.length; i++) {
-          statusMap.append(this.workOrderTaskCode[i][0], this.workOrderTaskCode[i][1])
+      fetchToDoData(data) {
+        this.toDoListLoading = true
+        if (data === undefined) {
+          getExecWorkOrderTaskList({ page: 1, page_size: 5 }).then(
+            res => {
+              this.execWorkOrderTaskList = res.results
+              this.taskToDoTotalNum = res.count
+              this.toDoListLoading = false
+            }
+          )
+        } else {
+          getExecWorkOrderTaskList(data).then(
+            res => {
+              this.execWorkOrderTaskList = res.results
+              this.taskToDoTotalNum = res.count
+              this.toDoListLoading = false
+            }
+          )
         }
-        console.log(statusMap)
-        return statusMap[status]
       },
-      replyWorkOrderTaskForm(data) {
-        console.log(data)
-        addWorkOrderOperation(data).then(res => {
+      fetchAuditData(data) {
+        this.auditListLoading = true
+        if (data === undefined) {
+          getAuditWorkOrderTaskList({ page: 1, page_size: 5 }).then(
+            res => {
+              this.auditWorkOrderTaskList = res.results
+              this.auditTaskTotalNum = res.count
+              this.auditListLoading = false
+            }
+          )
+        } else {
+          getAuditWorkOrderTaskList(data).then(
+            res => {
+              this.auditWorkOrderTaskList = res.results
+              this.auditTaskTotalNum = res.count
+              this.auditListLoading = false
+            }
+          )
+        }
+      },
+      handleSearchTask(searchData) {
+        this.searchForm = searchData
+        this.fetchData()
+      },
+      handleCommitAddWorkOrderTask(data) {
+        addWorkOrderTaskList(data).then(() => {
           this.$message({
             message: '操作成功',
             type: 'success'
           })
-          this.workOrderTaskDetailVisible = false
           this.fetchData()
         })
+      },
+      refresh() {
+        this.fetchData()
+      },
+      refreshToDoList(data) {
+        this.fetchToDoData(data)
+      },
+      auditListRefresh(data) {
+        this.fetchAuditData(data)
       }
     },
     created() {
       this.fetchData()
+      this.fetchToDoData()
+      this.fetchAuditData()
     }
   }
 </script>
@@ -138,4 +170,13 @@
   /*.work_order_class {*/
   /*  overflow: scroll;*/
   /*}*/
+  .el-select .el-input {
+    width: 130px;
+  }
+  .input-with-select .el-input-group__prepend {
+    background-color: #fff;
+  }
+  .el-tabs {
+    margin-bottom: 10px;
+  }
 </style>

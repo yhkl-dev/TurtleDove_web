@@ -1,9 +1,11 @@
 <template>
-    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px" >
-      <el-input size='small' placeholder="搜索" v-model="search_user_key" style="width: 500px" @keyup.enter.native="searchClick">
-        <el-button slot="append" icon="el-icon-search" @click="searchClick"></el-button>
-      </el-input>
-      <el-button type="primary" size="small" @click="addClick">添加用户</el-button>
+    <div class="app-container" >
+      <div class="filter-container">
+        <el-input size='small' placeholder="搜索" v-model="search_user_key" style="width: 30%" @keyup.enter.native="searchClick">
+          <el-button slot="append" icon="el-icon-search" @click="searchClick"></el-button>
+        </el-input>
+        <el-button type="primary" size="small" @click="addClick">添加用户</el-button>
+      </div>
       <el-table v-loading="loading"
               element-loading-text="拼命加载中"
               :data="userList" style="width: 100%; margin-top: 10px ">

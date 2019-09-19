@@ -41,6 +41,11 @@ const ServerReport = () => import('@/views/report/ServerReport')
 
 /* 工单系统*/
 const WorkOrderTask = () => import('@/views/workorder/workOrderTask')
+const WorkOrderModelManagement = () => import('@/views/workorder/WorkOrderModelManagement')
+const workOrderHistory = () => import('@/views/workorder/workOrderHistory')
+
+/* 项目管理*/
+const ProjectList = () => import('@/views/project/ProjectList')
 
 export const constantRouterMap = [
   {
@@ -113,6 +118,23 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/project_management',
+    component: Layout,
+    name: '项目管理',
+    meta: {
+      title: '项目管理',
+      icon: 'project'
+    },
+    children: [
+      {
+        path: 'project_list',
+        component: ProjectList,
+        name: '项目列表',
+        meta: { title: '项目列表', icon: 'project' }
+      }
+    ]
+  },
+  {
     path: '/workorder',
     component: Layout,
     name: '工单',
@@ -124,8 +146,20 @@ export const constantRouterMap = [
       {
         path: 'my_workorder',
         component: WorkOrderTask,
-        name: '我的工单',
-        meta: { title: 'my_workorder', icon: 'order' }
+        name: '工单列表',
+        meta: { title: '工单列表', icon: 'order' }
+      },
+      {
+        path: 'work_order_model_manage',
+        component: WorkOrderModelManagement,
+        name: '模板管理',
+        meta: { title: '模板管理', icon: 'order' }
+      },
+      {
+        path: 'work_order_history',
+        component: workOrderHistory,
+        name: '工单历史',
+        meta: { title: '工单历史', icon: 'order' }
       }
     ]
   },

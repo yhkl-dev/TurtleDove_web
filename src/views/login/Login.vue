@@ -64,13 +64,6 @@
       }
     },
     methods: {
-      showPwd() {
-        if (this.pwdType === 'password') {
-          this.pwdType = ''
-        } else {
-          this.pwdType = 'password'
-        }
-      },
       loginClick() {
         this.$refs.loginForm.validate(valid => {
           if (!valid) {
