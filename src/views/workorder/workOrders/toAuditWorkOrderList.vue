@@ -39,6 +39,25 @@
                        prop="order_model"
                        align="center">
       </el-table-column>
+      <el-table-column label="产品线"
+                       prop="order_product_name"
+                       align="center">
+      </el-table-column>
+      <el-table-column label="项目名称"
+                       prop="order_project_name"
+                       align="center">
+      </el-table-column>
+      <el-table-column label="平台"
+                       width="150px"
+                       align="center">
+        <template slot-scope="scope">
+          <!--          {{ scope.row.order_env_type }}-->
+          <span v-for="item in scope.row.order_env_type">
+            <el-tag size="mini"> {{ item.name }}</el-tag>
+            <span> </span>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="当前审核用户"
                        prop="current_audit_user"
                        align="center">

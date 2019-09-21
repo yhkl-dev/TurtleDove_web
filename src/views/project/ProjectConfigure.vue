@@ -1,48 +1,45 @@
 <template>
     <div class="app-container">
-      <div class="filter-container">
-        <el-form :inline="true" :model="addParameterForm">
-          <el-row :gutter="10">
-            <el-col :span="1">
-              <el-form-item>
-                <el-button type="success"
-                           v-if="addFormVisible === false"
-                           size="mini"
-                           icon="el-icon-plus"
-                           @click="handleAddParameter"
-                           circle>
-                </el-button>
-                <el-button v-if="addFormVisible === true"
-                           type="danger"
-                           size="mini"
-                           icon="el-icon-minus"
-                           @click="addFormVisible = false"
-                           circle></el-button>
-              </el-form-item>
-            </el-col>
-            <el-col :span="20" v-if="addFormVisible">
-              <el-form-item  label="key">
-                <el-input width="80%"
-                          v-model="addParameterForm.item_name"
-                          placeholder="key"
-                          size="mini"></el-input>
-              </el-form-item>
-              <el-form-item label="value">
-                <el-input width="80%"
-                          v-model="addParameterForm.item_value"
-                          placeholder="value"
-                          size="mini"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button size="mini" type="text" @click="handleCommitAddParameter">Save</el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
+      <div class="filter-container" >
+        <el-form :inline="true"
+                 :model="addParameterForm">
+          <el-form-item>
+            <el-button type="success"
+                       v-if="addFormVisible === false"
+                       size="mini"
+                       icon="el-icon-plus"
+                       @click="handleAddParameter"
+                       circle>
+            </el-button>
+            <el-button v-if="addFormVisible === true"
+                       type="danger"
+                       size="mini"
+                       icon="el-icon-minus"
+                       @click="addFormVisible = false"
+                       circle></el-button>
+          </el-form-item>
+          <el-form-item  v-if="addFormVisible" label="key">
+            <el-input width="80%"
+                      v-model="addParameterForm.item_name"
+                      placeholder="key"
+                      size="mini">
+            </el-input>
+          </el-form-item>
+          <el-form-item v-if="addFormVisible"
+                        label="value">
+            <el-input width="80%"
+                      v-model="addParameterForm.item_value"
+                      placeholder="value"
+                      size="mini"></el-input>
+          </el-form-item>
+          <el-form-item v-if="addFormVisible">
+            <el-button size="mini" type="text" @click="handleCommitAddParameter">Save</el-button>
+          </el-form-item>
         </el-form>
       </div>
       <el-table :data="projectConfigureParameter"
                 :show-header="false">
-        <el-table-column align="left">
+        <el-table-column align="left" >
           <template slot-scope="{row}">
             <template v-if="row.edit">
               <el-row>
@@ -126,7 +123,6 @@
     methods: {
       handleCommitAddParameter() {
         this.addParameterForm.belong_project = this.projectId
-        console.log('addform', this.addParameterForm)
         addProjectConfigure(this.addParameterForm).then(() => {
           this.$message({
             message: '添加成功',
@@ -137,7 +133,6 @@
         })
       },
       handleAddParameter() {
-        console.log('add')
         this.addFormVisible = true
       },
       cancelEdit(row) {
@@ -179,7 +174,6 @@
         }
       },
       handleDeleteParams(row) {
-        console.log('delete')
         this.$confirm('此操作将删除 [ ' + row.name + ' ] 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

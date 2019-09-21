@@ -5,6 +5,8 @@
         <my-work-order-list v-bind:workOrderTaskList="workOrderTaskList"
                             v-bind:workOrderModelList="workOrderModelList"
                             v-bind:taskTotalNum="taskTotalNum"
+                            v-bind:productList="productList"
+                            v-bind:projectList="projectList"
                             v-bind:loading="loading"
                             @handleSearchTask="handleSearchTask"
                             @refresh="refresh"
@@ -16,7 +18,8 @@
         <to-do-work-order-list v-bind:execWorkOrderTaskList="execWorkOrderTaskList"
                                v-bind:taskToDoTotalNum="taskToDoTotalNum"
                                v-bind:toDoListLoading="toDoListLoading"
-                               @refreshToDoList="refreshToDoList"></to-do-work-order-list>
+                               @refreshToDoList="refreshToDoList">
+        </to-do-work-order-list>
       </el-tab-pane>
     </el-tabs>
     <el-tabs type="border-card">
@@ -24,7 +27,8 @@
         <to-audit-work-order-list v-bind:auditWorkOrderTaskList="auditWorkOrderTaskList"
                                   v-bind:auditListLoading="auditListLoading"
                                   v-bind:auditTaskTotalNum="auditTaskTotalNum"
-                                  @auditListRefresh="auditListRefresh"></to-audit-work-order-list>
+                                  @auditListRefresh="auditListRefresh">
+        </to-audit-work-order-list>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -39,6 +43,8 @@
     getTemplateWorkOrderModelList,
     getExecWorkOrderTaskList,
     getAuditWorkOrderTaskList } from '@/api/workorder'
+  import { getProductList } from '@/api/resource'
+  import { getProjectList } from '@/api/project'
   import MyWorkOrderList from './workOrders/myWorkOrderList'
   import toDoWorkOrderList from './workOrders/toDoWorkOrderList'
   import toAuditWorkOrderList from './workOrders/toAuditWorkOrderList'
@@ -55,6 +61,8 @@
         workOrderModelList: [],
         execWorkOrderTaskList: [],
         auditWorkOrderTaskList: [],
+        productList: [],
+        projectList: [],
         taskTotalNum: 0,
         taskToDoTotalNum: 0,
         auditTaskTotalNum: 0,
@@ -92,6 +100,16 @@
         getTemplateWorkOrderModelList(params).then(
           res => {
             this.workOrderModelList = res.results
+          }
+        )
+        getProductList().then(
+          res => {
+            this.productList = res
+          }
+        )
+        getProjectList().then(
+          res => {
+            this.projectList = res.results
           }
         )
       },

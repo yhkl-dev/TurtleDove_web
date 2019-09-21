@@ -126,7 +126,7 @@ export function addMyResourceUser(params) {
 
 export function getProductTree() {
   return request({
-    url: '/productmanage/',
+    url: '/productManage/',
     method: 'get'
   })
 }
@@ -165,5 +165,12 @@ export function deleteProductLevelInfo(id) {
   return request({
     url: '/products/' + id + '/',
     method: 'delete'
+  })
+}
+
+export function getProductList() {
+  return request({
+    url: '/productList/',
+    method: 'get'
   })
 }

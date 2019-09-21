@@ -43,7 +43,6 @@
               <el-option v-for="(item, index) in flowTypeChoice"
                          :key="index"
                          :label="item.name"
-
                          :value="item.id">
               </el-option>
             </el-select>
@@ -59,102 +58,88 @@
       </el-dialog>
       <el-dialog title="流程详情"
                  :visible.sync="updateFlowItemVisible"
-                 width="50%">
+                 width="55%">
         <el-form ref="updateFlowItemForm"
                  :rules="rules"
                  :model="updateFlowItemForm"
-                 label-width="70px">
+                 :inline="true" lable-width="80%">
           <el-steps :active="active"
                     space="160px"
+                    class="step"
                     direction="vertical">
-            <el-step
-            :title="flowItem.flow_item_name"
-            v-for="(flowItem, index) in updateTypeItemForm.flow_item"
-            :description="flowItem.exec_user"
-            :key="index">
+            <el-step  :title="flowItem.flow_item_name"
+                      v-for="(flowItem, index) in updateTypeItemForm.flow_item"
+                      :description="flowItem.exec_user"
+                      :key="index">
               <template slot="description">
                 <el-card >
-                  <el-row :gutter="24">
-                    <el-col :span="6">
-                      <div v-if="active === index">
-                        <el-form-item prop="flow_item_name" label="流程名称" >
-                          <el-input size="mini"
-                                    v-model="updateFlowItemForm.flow_item_name"
-                                    placeholder="流程名称"></el-input>
-                        </el-form-item>
-                      </div>
-                      <div v-else>
-                        <el-form-item prop="flow_item_name" label="名称" >
-                          <el-input size="mini" v-model="flowItem.flow_item_name" disabled placeholder="流程名称"></el-input>
-                        </el-form-item>
-                      </div>
-                    </el-col>
-                    <el-col :span="6">
-                      <div v-if="active === index">
-                        <el-form-item prop="exec_user" label="执行用户" >
-                          <el-select v-model="updateFlowItemForm.exec_user"
-                                     placeholder="执行用户"
-                                     size="mini"
-                                     style="width: 100%">
-                            <el-option v-for="(item, index) in userList"
-                                       :key="index"
-                                       :label="item.username"
-                                       :value="item.id">
-                            </el-option>
-                          </el-select>
-                        </el-form-item>
-                      </div>
-                      <div v-else>
-                        <el-form-item prop="exec_user" label="执行用户" >
-  <!--                          <el-input size="mini"  v-model="flowItem.exec_user" disabled placeholder="执行用户"></el-input>-->
-                          <el-select v-model="flowItem.exec_user" placeholder="执行用户"  disabled size="mini" style="width: 100%">
-                            <el-option v-for="(item, index) in userList"
-                                       :key="index"
-                                       :label="item.username"
-                                       :value="item.id">
-                            </el-option>
-                          </el-select>
-                        </el-form-item>
-                      </div>
-                    </el-col>
-                    <el-col :span="6">
-                      <div v-if="active === index">
-                        <el-form-item prop="exec_order" label="执行顺序" >
-                          <el-input size="mini"  v-model="updateFlowItemForm.exec_order"  placeholder="执行顺序"></el-input>
-                        </el-form-item>
-                      </div>
-                      <div v-else>
-                        <el-form-item prop="exec_order" label="执行顺序" >
-                          <el-input size="mini"  v-model="flowItem.exec_order"  disabled placeholder="执行顺序"></el-input>
-                        </el-form-item>
-                      </div>
-                    </el-col>
-                    <el-col :span="6" pull="1">
-                      <el-form-item >
-                        <el-button size="mini"
-                                   type="primary"
-                                   icon="el-icon-edit" circle
-                                   v-if="active !== index"
-                                   @click="editTaskFlowItem(flowItem, index)"></el-button>
-                        <el-button size="mini"
-                                   type="success"
-                                   icon="el-icon-check"
-                                   v-if="active === index"
-                                   circle
-                                   @click="commitEditTaskFlowItem(updateFlowItemForm)"></el-button>
-                        <el-button size="mini"
-                                   type="danger"
-                                   icon="el-icon-delete"
-                                   circle @click="deleteTaskFlowItem(flowItem, index)"></el-button>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
+                  <el-form-item v-if="active === index"
+                                prop="flow_item_name"
+                                label="名称" >
+                    <el-input size="mini"
+                              v-model="updateFlowItemForm.flow_item_name"
+                              placeholder="流程名称"></el-input>
+                  </el-form-item>
+                  <el-form-item v-else prop="flow_item_name"
+                                label="名称" >
+                    <el-input size="mini"
+                              v-model="flowItem.flow_item_name"
+                              disabled placeholder="流程名称">
+                    </el-input>
+                  </el-form-item>
+
+                  <el-form-item  v-if="active === index" prop="exec_user" label="执行用户" >
+                    <el-select v-model="updateFlowItemForm.exec_user"
+                               placeholder="执行用户"
+                               size="mini"
+                               style="width: 100%">
+                      <el-option v-for="(item, index) in userList"
+                                 :key="index"
+                                 :label="item.username"
+                                 :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item  v-else prop="exec_user" label="执行用户" >
+                    <el-select v-model="flowItem.exec_user" placeholder="执行用户"  disabled size="mini" style="width: 100%">
+                      <el-option v-for="(item, index) in userList"
+                                 :key="index"
+                                 :label="item.username"
+                                 :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+
+                  <el-form-item  v-if="active === index" prop="exec_order" label="执行顺序" >
+                    <el-input size="mini"  v-model="updateFlowItemForm.exec_order"  placeholder="执行顺序"></el-input>
+                  </el-form-item>
+                  <el-form-item  v-else prop="exec_order" label="执行顺序" >
+                    <el-input size="mini"  v-model="flowItem.exec_order"  disabled placeholder="执行顺序"></el-input>
+                  </el-form-item>
+
+                  <el-form-item >
+                    <el-button size="mini"
+                               type="primary"
+                               icon="el-icon-edit" circle
+                               v-if="active !== index"
+                               @click="editTaskFlowItem(flowItem, index)"></el-button>
+                    <el-button size="mini"
+                               type="success"
+                               icon="el-icon-check"
+                               v-if="active === index"
+                               circle
+                               @click="commitEditTaskFlowItem(updateFlowItemForm)"></el-button>
+                    <el-button size="mini"
+                               type="danger"
+                               icon="el-icon-delete"
+                               circle @click="deleteTaskFlowItem(flowItem, index)"></el-button>
+                  </el-form-item>
                 </el-card>
               </template>
             </el-step>
           </el-steps>
           <el-form-item>
-            <el-button type="primary" size="small" @click="addFlowItem">添加审核人</el-button>
+            <el-button type="primary" size="mini" style="margin-left: 35px" @click="addFlowItem">添加审核人</el-button>
           </el-form-item>
         </el-form>
         <el-form ref="updateTypeItemForm" :model="updateTypeItemForm" label-width="80px">
@@ -177,8 +162,8 @@
             <el-input size="mini" v-model="updateTypeItemForm.change_time" :disabled="true" placeholder="更新时间"></el-input>
           </el-form-item>
           <el-form-item >
-            <el-button type="primary" size="small" @click="updateFlow">确 定</el-button>
-            <el-button size="small" @click="updateFlowItemVisible = false">取 消</el-button>
+            <el-button type="primary" size="mini" @click="updateFlow">确 定</el-button>
+            <el-button size="mini" @click="updateFlowItemVisible = false">取 消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -350,6 +335,11 @@
   }
 </script>
 
+<style>
+  .el-steps .el-step:last-of-type .el-step__description {
+    padding-right: 10% !important;
+  }
+</style>
 <style scoped>
   .bottom {
     margin-top: 13px;
@@ -366,11 +356,8 @@
     content: "";
   }
 
-  .el-steps .el-step:last-of-type .el-step__description {
-    padding-right: 10%;
-  }
-
   .clearfix:after {
     clear: both
   }
 </style>
+

@@ -9,17 +9,20 @@
         </el-col>
         <el-col :span="6">
           <work-order-type-manager v-bind:templateWorkOrderTypeList="templateWorkOrderTypeList"
-                                   @fresh="fresh"></work-order-type-manager>
+                                   @fresh="fresh">
+          </work-order-type-manager>
         </el-col>
         <el-col :span="6">
           <work-order-flow-type-manager v-bind:templateWorkOrderFlowTypeList="templateWorkOrderFlowTypeList"
                                         v-bind:templateWorkOrderFlowList="templateWorkOrderFlowList"
-                                        @fresh="fresh"></work-order-flow-type-manager>
+                                        @fresh="fresh">
+          </work-order-flow-type-manager>
         </el-col>
         <el-col :span="6">
           <work-order-flow-manager v-bind:templateWorkOrderFlowList="templateWorkOrderFlowList"
                                    v-bind:userList="userList"
-                                   @fresh="fresh"></work-order-flow-manager>
+                                   @fresh="fresh">
+          </work-order-flow-manager>
         </el-col>
       </el-row>
     </div>

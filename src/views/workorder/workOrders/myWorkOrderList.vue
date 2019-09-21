@@ -58,6 +58,7 @@
           <el-pagination background
                          @current-change="paginationChange"
                          :pager-count="5"
+                         size="mini"
                          :page-size="searchForm.page_size"
                          layout="total, prev, pager, next, jumper"
                          :current-page.sync="searchForm.page"
@@ -84,21 +85,38 @@
                        prop="order_model"
                        align="center">
       </el-table-column>
+      <el-table-column label="产品线"
+                       prop="order_product_name"
+                       align="center">
+      </el-table-column>
+      <el-table-column label="项目名称"
+                       prop="order_project_name"
+                       align="center">
+      </el-table-column>
+      <el-table-column label="平台"
+                       width="150px"
+                       align="center">
+        <template slot-scope="scope">
+<!--          {{ scope.row.order_env_type }}-->
+          <span v-for="item in scope.row.order_env_type">
+            <el-tag size="mini"> {{ item.name }}</el-tag>
+            <span> </span>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="当前执行用户"
+                       width="120px"
                        align="center">
         <template slot-scope="scope">
           {{ scope.row.current_exec_user || '——' }}
         </template>
       </el-table-column>
       <el-table-column label="当前审核用户"
+                       width="120px"
                        align="center">
         <template slot-scope="scope">
           {{ scope.row.current_audit_user || '——' }}
         </template>
-      </el-table-column>
-      <el-table-column label="创建时间"
-                       prop="create_time"
-                       align="center">
       </el-table-column>
       <el-table-column label="上次更新时间"
                        prop="update_time"
@@ -150,10 +168,10 @@
     <el-dialog title="新建工单"
                center
                :visible.sync="workOrderTaskVisible"
-               width="30%">
+               width="40%" >
       <el-form ref="addWorkOrderTaskForm"
                :model="addWorkOrderTaskForm"
-               label-width="80px">
+               label-width="100px">
         <el-form-item label="工单标题">
           <el-input v-model="addWorkOrderTaskForm.order_title"
                     placeholder="请输入工单标题">
@@ -176,6 +194,51 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="平台环境类型" prop="order_env_type">
+          <el-select v-model="addWorkOrderTaskForm.order_env_type"
+                     multiple
+                     style="width: 100%"
+                     placeholder="请选择平台环境类型">
+            <el-option v-for="(item, index) in workOrderEnvTypeList"
+                       :key="index"
+                       :label="item.name"
+                       :value="item.name">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="资源环境类型">
+          <el-select v-model="addWorkOrderTaskForm.order_products"
+                     style="width: 100%"
+                     placeholder="请选择资源环境类型">
+            <el-option v-for="(item, index) in productList"
+                       :key="index"
+                       :label="item.service_name"
+                       :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="项目">
+          <el-select v-model="addWorkOrderTaskForm.order_project"
+                     style="width: 100%"
+                     placeholder="请选择项目">
+            <el-option v-for="(item, index) in projectList"
+                       :key="index"
+                       :label="item.project_name"
+                       :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="附件" prop="order_files" >
+          <el-upload ref="upload"
+                     :action="upLoadUrl"
+                     :on-remove="handleRemove"
+                     :on-change="handleFileChange"
+                     :file-list="fileList"
+                     :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <div slot="tip" class="el-upload__tip">如内容较多可上传文件</div>
+          </el-upload>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary"
                      size="small"
@@ -188,10 +251,15 @@
     <el-dialog title="编辑"
                center
                :visible.sync="updateWorkOrderTaskVisible"
-               width="30%">
+               width="40%">
       <el-form ref="editWorkOrderTaskForm"
                :model="editWorkOrderTaskForm"
-               label-width="80px">
+               label-width="100px">
+        <el-form-item label="工单id">
+          <el-input v-model="editWorkOrderTaskForm.order_task_id"
+                    disabled>
+          </el-input>
+        </el-form-item>
         <el-form-item label="工单标题">
           <el-input v-model="editWorkOrderTaskForm.order_title"
                     placeholder="请输入工单标题">
@@ -214,6 +282,55 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="平台环境类型" prop="order_env_type">
+          <el-select v-model="editWorkOrderTaskForm.order_env_type"
+                     multiple
+                     style="width: 100%"
+                     placeholder="请选择平台环境类型">
+            <el-option v-for="(item, index) in workOrderEnvTypeList"
+                       :key="index"
+                       :label="item.name"
+                       :value="item.name">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="资源环境类型" prop="editWorkOrderTaskForm.order_products">
+          <el-select v-model="editWorkOrderTaskForm.order_products"
+                     style="width: 100%"
+                     placeholder="请选择资源环境类型">
+            <el-option v-for="(item, index) in productList"
+                       :key="index"
+                       :label="item.service_name"
+                       :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="项目" prop="editWorkOrderTaskForm.order_project">
+          <el-select v-model="editWorkOrderTaskForm.order_project"
+                     style="width: 100%"
+                     placeholder="请选择项目">
+            <el-option v-for="(item, index) in projectList"
+                       :key="index"
+                       :label="item.project_name"
+                       :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+<!--        <el-form-item label="附件" prop="editWorkOrderTaskForm.order_files">-->
+<!--          <el-input size="mini" v-model="editWorkOrderTaskForm.order_files" disabled></el-input>-->
+<!--        </el-form-item>-->
+        <el-form-item label="上传附件" prop="order_files">
+          <el-input size="mini" v-model="editWorkOrderTaskForm.order_files" disabled></el-input>
+          <el-upload ref="upload"
+                     :action="upLoadUrl"
+                     :on-remove="handleRemove"
+                     :on-change="handleUpdateFileChange"
+                     :file-list="fileList"
+                     :auto-upload="false">
+            <el-button slot="trigger" size="mini" type="primary">选取文件</el-button>
+            <div slot="tip" class="el-upload__tip">如内容较多可上传文件</div>
+          </el-upload>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary"
                      size="small"
@@ -222,7 +339,7 @@
                      size="small"
                      @click="submitWorkOrderTaskDetailInUpdateForm">提 交</el-button>
           <el-button size="small"
-                     @click="updateWorkOrderTaskVisible = false">取 消</el-button>
+                     @click="updateWorkOrderTaskVisible === false">取 消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -236,23 +353,38 @@
   export default {
     name: 'MyWorkOrderList',
     components: { workOrderDetail },
-    props: ['workOrderTaskList', 'taskTotalNum', 'workOrderModelList', 'loading'],
+    props: ['workOrderTaskList', 'taskTotalNum', 'workOrderModelList', 'loading', 'productList', 'projectList'],
     data() {
       return {
         workOrderTaskDetailVisible: false,
         updateWorkOrderTaskVisible: false,
         workOrderTaskVisible: false,
+        workOrderEnvTypeList: [
+          { id: 1, name: '前端' },
+          { id: 0, name: '后台' },
+          { id: 2, name: '安卓' }
+        ],
         workOrderDetail: {},
+        fileList: [],
         addWorkOrderTaskForm: {
           order_title: '',
           order_purpose: '',
+          order_files: '',
+          order_env_type: [],
+          order_products: '',
+          order_project: '',
           order_status: 1,
           template_order_model: ''
         },
         editWorkOrderTaskForm: {
           id: '',
           order_title: '',
+          order_task_id: '',
           order_purpose: '',
+          order_files: '',
+          order_env_type: [],
+          order_products: '',
+          order_project: '',
           order_status: 1,
           template_order_model: ''
         },
@@ -296,10 +428,33 @@
             }
           }]
         },
-        dateValue: ''
+        dateValue: '',
+        upLoadUrl: '',
+        oldValue: ''
       }
     },
     methods: {
+      handleRemove(file, fileList) {
+        console.log(file, fileList)
+      },
+      handleFileChange(file, fileList) {
+        if (fileList.length > 0) {
+          const file = fileList[fileList.length - 1]
+          this.fileList = [file]
+          this.addWorkOrderTaskForm.order_files = file.raw
+        } else {
+          this.fileList = []
+        }
+      },
+      handleUpdateFileChange(file, fileList) {
+        if (fileList.length > 0) {
+          const file = fileList[fileList.length - 1]
+          this.fileList = [file]
+          this.editWorkOrderTaskForm.order_files = file.raw
+        } else {
+          this.fileList = []
+        }
+      },
       handleRefresh() {
         this.$emit('refresh')
       },
@@ -323,7 +478,7 @@
       },
       restOrderField() {
         this.workOrderTaskDetailVisible = false
-        this.$refs[this.workOrderDetail].resetFields()
+        this.$refs['workOrderDetail'].resetFields()
       },
       handleAddWorkOrderTask() {
         this.workOrderTaskVisible = true
@@ -331,8 +486,19 @@
           this.$refs['addWorkOrderTaskForm'].resetFields()
         }
       },
-      handleCommitAddWorkOrderTask() {
-        this.$emit('handleCommitAddWorkOrderTask', this.addWorkOrderTaskForm)
+      handleCommitAddWorkOrderTask: function() {
+        console.log('addWorkOrderTaskForm', this.addWorkOrderTaskForm)
+        const formData = new FormData()
+        formData.append('order_title', this.addWorkOrderTaskForm.order_title)
+        formData.append('order_purpose', this.addWorkOrderTaskForm.order_purpose)
+        formData.append('order_env_type', this.addWorkOrderTaskForm.order_env_type.toString())
+        formData.append('order_products', this.addWorkOrderTaskForm.order_products)
+        formData.append('order_project', this.addWorkOrderTaskForm.order_project)
+        formData.append('order_status', this.addWorkOrderTaskForm.order_status)
+        formData.append('template_order_model', this.addWorkOrderTaskForm.template_order_model)
+        formData.append('order_files', this.addWorkOrderTaskForm.order_files)
+        console.log(formData)
+        this.$emit('handleCommitAddWorkOrderTask', formData)
         this.workOrderTaskVisible = false
       },
       replyWorkOrderTaskForm(data) {
@@ -380,22 +546,60 @@
         })
       },
       editWorkOrderTaskDetail(row) {
-        if (this.$refs['editWorkOrderTaskForm'] !== undefined) {
-          this.$refs['editWorkOrderTaskForm'].resetFields()
-        }
+        // console.log(this.updateWorkOrderTaskVisible)
+        console.log(row)
         this.updateWorkOrderTaskVisible = true
-        const { id, order_title, order_purpose, template_order_model } = row
-        this.editWorkOrderTaskForm = { id, order_title, order_purpose, template_order_model }
+        console.log('env type', row.order_env_type)
+        console.log('edit order type', typeof row.order_files)
+        const { id, order_title, order_task_id, status_code, order_purpose, order_products, order_env_type, order_project, order_files, template_order_model } = row
+        this.editWorkOrderTaskForm = { id, order_title, order_task_id: order_task_id, order_status: status_code, order_purpose, order_products, order_env_type, order_project, order_files, template_order_model }
+        this.oldValue = row.order_files
       },
-      handleCommitUpdateWorkOrderTask() {
-        updateWorkOrderTask(this.editWorkOrderTaskForm.id, this.editWorkOrderTaskForm).then(() => {
-          this.updateWorkOrderTaskVisible = false
-          this.$message({
-            message: '修改成功',
-            type: 'success'
+      handleCommitUpdateWorkOrderTask: function() {
+        if (this.oldValue === this.editWorkOrderTaskForm.order_files) {
+          delete this.editWorkOrderTaskForm.order_files
+          const env_type = []
+          this.editWorkOrderTaskForm.order_env_type.forEach(item => {
+            env_type.push(item.name)
           })
-          this.$emit('refresh')
-        })
+          console.log('in else', env_type)
+          this.editWorkOrderTaskForm.order_env_type = env_type.toString()
+          updateWorkOrderTask(this.editWorkOrderTaskForm.id, this.editWorkOrderTaskForm).then(() => {
+            this.updateWorkOrderTaskVisible = false
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.$emit('refresh')
+          })
+        } else {
+          console.log('editWorkOrderTaskForm status', this.editWorkOrderTaskForm)
+          const formData = new FormData()
+          formData.append('order_title', this.editWorkOrderTaskForm.order_title)
+          formData.append('order_task_id', this.editWorkOrderTaskForm.order_task_id)
+          formData.append('order_purpose', this.editWorkOrderTaskForm.order_purpose)
+          const env_type = []
+          this.editWorkOrderTaskForm.order_env_type.forEach(item => {
+            env_type.push(item.name)
+          })
+          console.log('in else', env_type)
+          this.editWorkOrderTaskForm.order_env_type = env_type.toString()
+          formData.append('order_env_type', this.editWorkOrderTaskForm.order_env_type)
+          formData.append('order_products', this.editWorkOrderTaskForm.order_products)
+          formData.append('order_project', this.editWorkOrderTaskForm.order_project)
+          formData.append('order_status', this.editWorkOrderTaskForm.order_status)
+          formData.append('template_order_model', this.editWorkOrderTaskForm.template_order_model)
+          formData.append('order_files', this.editWorkOrderTaskForm.order_files)
+          console.log('ordef_file type', typeof this.editWorkOrderTaskForm.order_files)
+          updateWorkOrderTask(this.editWorkOrderTaskForm.id, formData).then(() => {
+            this.updateWorkOrderTaskVisible = false
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.$emit('refresh')
+          })
+        }
       }
     }
   }

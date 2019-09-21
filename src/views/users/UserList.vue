@@ -22,10 +22,10 @@
           <el-table-column prop="last_login" label="上次登陆时间" align="center"> </el-table-column>
           <el-table-column prop=""  label="操作"  width="400" align="center">
               <template slot-scope="scope">
-                <el-button type="primary" size="mini" plain @click="checkRoleClick(scope.row)">查看角色</el-button>
-                <el-button type="primary" size="mini" plain @click="chooceRoleClick(scope.row)">指定角色</el-button>
-                <el-button type="warning" size="mini" plain @click="changeMobileClick(scope.row)">修改</el-button>
-                <el-button type="danger" size="mini"  plain @click="deleteClick(scope.row)">删除</el-button>
+                <el-button type="primary" size="mini"  @click="checkRoleClick(scope.row)">查看角色</el-button>
+                <el-button type="primary" size="mini"  @click="chooceRoleClick(scope.row)">指定角色</el-button>
+                <el-button type="warning" size="mini"  @click="changeMobileClick(scope.row)">修改</el-button>
+                <el-button type="danger" size="mini"   @click="deleteClick(scope.row)">删除</el-button>
               </template>
           </el-table-column>
       </el-table>

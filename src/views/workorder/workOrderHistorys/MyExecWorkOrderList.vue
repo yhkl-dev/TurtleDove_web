@@ -62,6 +62,25 @@
                        prop="created_user"
                        align="center">
       </el-table-column>
+      <el-table-column label="产品线"
+                       prop="order_product_name"
+                       align="center">
+      </el-table-column>
+      <el-table-column label="项目名称"
+                       prop="order_project_name"
+                       align="center">
+      </el-table-column>
+      <el-table-column label="平台"
+                       width="180px"
+                       align="center">
+        <template slot-scope="scope">
+          <span v-for="item in scope.row.order_env_type">
+            <el-tag > {{ item.name }}</el-tag>
+            <span> </span>
+          </span>
+
+        </template>
+      </el-table-column>
       <el-table-column label="最终审核用户"
                        prop="current_audit_user"
                        align="center">

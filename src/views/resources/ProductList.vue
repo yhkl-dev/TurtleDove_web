@@ -1,27 +1,29 @@
 <template>
-    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px">
+    <div class="app-container">
       <el-row :gutter="24">
         <el-col :span="6" >
-          <el-row :gutter="24">
-            <el-col :span="16" >
-              <el-input size="small"
-                placeholder="输入关键字过滤"
-                v-model="filterText">
+          <el-row :gutter="12">
+            <el-col :span="12" >
+              <el-input size="mini"
+                        placeholder="输入关键字过滤"
+                        v-model="filterText">
               </el-input>
             </el-col>
-            <el-col :span="8" >
-              <el-button size="small" style="margin-left: -5px" @click="addClick">添加</el-button>
+            <el-col :span="4" >
+              <el-button size="mini" type="primary" @click="addClick">添加</el-button>
+            </el-col>
+            <el-col :span="2">
+              <el-button size="mini" type="info" @click="handleFresh">刷新</el-button>
             </el-col>
           </el-row>
           <div class="filter-tree">
-            <el-tree
-              :data="productTreeList"
-              :props="defaultProps"
-              :default-expand-all="expandAll"
-              :highlight-current="true"
-              :filter-node-method="filterNode"
-              ref="tree"
-              @node-click="treeNodeClick">
+            <el-tree :data="productTreeList"
+                     :props="defaultProps"
+                     :default-expand-all="expandAll"
+                     :highlight-current="true"
+                     :filter-node-method="filterNode"
+                     ref="tree"
+                     @node-click="treeNodeClick">
             </el-tree>
           </div>
         </el-col>
@@ -45,11 +47,10 @@
               </el-form-item>
               <el-form-item label="运维接口人" prop="op_interface">
                   <el-select multiple class="select" v-model="productForm.op_interface"  :disabled="disabled" filterable placeholder="请选择">
-                    <el-option
-                      v-for="(item, index) in userList"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.id">
+                    <el-option v-for="(item, index) in userList"
+                               :key="index"
+                               :label="item.name"
+                               :value="item.id">
                         <span style="float: left">{{ item.name }}</span>
                         <span style="float: right; color: #8492a6; font-size: 13px">{{ item.email }}</span>
                     </el-option>
@@ -74,44 +75,15 @@
               <el-button type="primary" @click="deleteClick" :disabled="buttonDisabled">删除</el-button>
             </el-form-item>
           </el-form>
-          <el-table
-              class="table"
-              v-loading="serverListloading"
-              element-loading-text="拼命加载中"
-              :data="serverList"
-              border
-              v-show="showServerListTable">
-            <el-table-column
-                    prop="hostname"
-                    label="主机名"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    prop="manage_ip"
-                    label="管理IP"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    prop="status"
-                    label="状态"
-                    align="center">
-            </el-table-column>
-             <el-table-column
-                    prop="last_check"
-                    label="LAST CHECK"
-                    align="center">
-            </el-table-column>
-          </el-table>
-          <div class="text-center" v-show="serverListTotalNum>=10">
-            <el-pagination
-                    background
-                    @current-change="paginationChange"
-                    layout="total, prev, pager, next, jumper"
-                    :current-page.sync="serverListPage"
-                    :total="serverListTotalNum">
-            </el-pagination>
-          </div>
+          <product-table v-bind:serverListLoading="serverListLoading"
+                         v-bind:serverList="serverList"
+                         v-bind:showServerListTable="showServerListTable"
+                         v-bind:serverListPage="serverListPage"
+                         @paginationChange="paginationChange"
+                         v-bind:serverListTotalNum="serverListTotalNum">
+          </product-table>
         </el-col>
+
       </el-row>
     </div>
 </template>
@@ -119,8 +91,10 @@
 <script>
 import { getUserList } from '@/api/users'
 import { getProductTree, getProductLevel, getProductLevelInfo, addProduct, updateProduct, deleteProductLevelInfo, getResourceList } from '@/api/resource'
+import ProductTable from './product/ProductTable'
 
 export default {
+  components: { ProductTable },
   data() {
     return {
       productFlag: '',
@@ -133,8 +107,8 @@ export default {
       serverList: [],
       serverListTotalNum: 0,
       serverListPage: 1,
-      serverListloading: false,
-      expandAll: false,
+      serverListLoading: false,
+      expandAll: true,
       productForm: {
         service_name: '',
         module_letter: '',
@@ -184,6 +158,9 @@ export default {
     }
   },
   methods: {
+    handleFresh() {
+      this.fetchServerListData()
+    },
     filterNode(value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1
@@ -193,7 +170,7 @@ export default {
       getResourceList({ page: this.serverListPage, server_purpose: this.server_purpose }).then(res => {
         this.serverList = res.results
         this.serverListTotalNum = res.count
-        this.serverListloading = false
+        this.serverListLoading = false
       })
     },
     paginationChange(val) {

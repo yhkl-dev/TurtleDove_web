@@ -3,30 +3,51 @@
     <el-collapse  v-model="activeNames" @change="handleChange" >
       <el-collapse-item title="基础信息" name="1">
         <el-row>
-          <el-col span="2">
+          <el-col :span="2">
             <table>
               <tr><td>工单标题</td></tr>
               <tr><td>工单状态</td></tr>
+              <tr><td>项目名称</td></tr>
               <tr><td>当前审核人</td></tr>
+              <tr><td>当前执行人</td></tr>
+              <tr><td>附件</td></tr>
             </table>
           </el-col>
-          <el-col span="6">
+          <el-col :span="6">
             <table>
               <tr><td>{{ workOrderDetail.order_title }}</td></tr>
               <tr><td>{{ workOrderDetail.status_name }}</td></tr>
+
+              <tr><td>{{ workOrderDetail.order_project_name }}</td></tr>
+
               <tr><td>{{ workOrderDetail.current_audit_user || '暂无' }}</td></tr>
+              <tr><td>{{ workOrderDetail.current_exec_user || '暂无' }}</td></tr>
+              <tr><td>
+                <el-button v-if="workOrderDetail.download_url !== null" size="mini" type="text" @click="downloadAttachment(workOrderDetail.download_url)">
+                  下载
+                </el-button>
+              </td></tr>
             </table>
           </el-col>
-          <el-col span="2">
+          <el-col :span="2">
             <table>
-              <tr><td>工单 ID</td></tr>
+              <tr><td>工单ID</td></tr>
+              <tr><td>产品线</td></tr>
+              <tr><td>平台</td></tr>
               <tr><td>创建时间</td></tr>
               <tr><td>更新时间</td></tr>
             </table>
           </el-col>
-          <el-col span="8">
+          <el-col :span="8">
             <table>
               <tr><td>{{ workOrderDetail.order_task_id }}</td></tr>
+              <tr><td>{{ workOrderDetail.order_product_name }}</td></tr>
+              <tr><td>
+                <span v-for="item in workOrderDetail.order_env_type">
+                  <el-tag size="mini" type="success">{{ item.name }}</el-tag>
+                  <span></span>
+                </span>
+              </td></tr>
               <tr><td>{{ workOrderDetail.create_time }}</td></tr>
               <tr><td>{{ workOrderDetail.update_time }}</td></tr>
             </table>
@@ -166,6 +187,9 @@
         } else {
           return
         }
+      },
+      downloadAttachment(url) {
+        window.location.href = url
       },
       handleReplyWorkOrder(id) {
         this.replyWorkOrderTaskForm.ops_reply_content = this.replyContent
