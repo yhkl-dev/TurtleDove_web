@@ -96,11 +96,11 @@ export function getTemplateWorkOrderTypeById(id) {
   })
 }
 
-export function getTemplateWorkOrderType(parms) {
+export function getTemplateWorkOrderType(params) {
   return request({
     url: '/templateWorkOrderType/',
     method: 'get',
-    parms
+    params
   })
 }
 
@@ -232,6 +232,30 @@ export function getWorkOrderTaskAuditHistory(params) {
 export function getWorkOrderHistoryCount(params) {
   return request({
     url: '/workOrderHistoryCount/',
+    method: 'get',
+    params
+  })
+}
+
+export function getWorkOrderHistCountCheckByProduct(params) {
+  return request({
+    url: '/workOrderHistCountCheckByProduct/',
+    method: 'get',
+    params
+  })
+}
+
+export function getLineChartData(params) {
+  return request({
+    url: '/lineChartData/',
+    method: 'get',
+    params
+  })
+}
+
+export function getLineChart(params) {
+  return request({
+    url: '/lineChart/',
     method: 'get',
     params
   })

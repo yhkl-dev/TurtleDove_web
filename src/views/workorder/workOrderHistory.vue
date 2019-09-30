@@ -13,23 +13,25 @@
     </el-card>
     <el-card>
       <div slot="header">
+        <span>审核历史</span>
+      </div>
+      <my-audit-work-order-list v-bind:workOrderAuditHistoryList="workOrderAuditHistoryList"
+                                v-bind:auditTotalNum="auditTotalNum"
+                                v-bind:workOrderModelList="workOrderModelList"
+                                @handleSearchAuditTask="handleSearchAuditTask"
+                                v-bind:auditLoading="auditLoading">
+      </my-audit-work-order-list>
+    </el-card>
+    <el-card>
+      <div slot="header">
         <span>执行历史</span>
       </div>
       <my-exec-work-order-list v-bind:workOrderExecHistoryList="workOrderExecHistoryList"
                                v-bind:execTotalNum="execTotalNum"
                                v-bind:workOrderModelList="workOrderModelList"
                                @handleSearchExecTask="handleSearchExecTask"
-                               v-bind:execLoading="execLoading"></my-exec-work-order-list>
-    </el-card>
-    <el-card>
-      <div slot="header">
-        <span>审核历史</span>
-      </div>
-      <my-audit-work-order-list v-bind:workOrderAuditHistoryList="workOrderAuditHistoryList"
-                               v-bind:auditTotalNum="auditTotalNum"
-                               v-bind:workOrderModelList="workOrderModelList"
-                               @handleSearchAuditTask="handleSearchAuditTask"
-                               v-bind:auditLoading="auditLoading"></my-audit-work-order-list>
+                               v-bind:execLoading="execLoading">
+      </my-exec-work-order-list>
     </el-card>
   </div>
 

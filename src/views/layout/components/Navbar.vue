@@ -3,20 +3,20 @@
         <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
         <breadcrumb></breadcrumb>
         <el-dropdown class="avatar-container" trigger="click">
+<!--           <span >-->
+<!--              欢迎！ {{ this.$store.getters.username }}<i class="el-icon-arrow-down e  l-icon&#45;&#45;right"></i>-->
+<!--            </span>-->
             <div class="avatar-wrapper">
-              <i class="el-icon-user"></i>
-                <!--<img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">-->
+              欢迎！ {{this.$store.getters.username }}
                 <i class="el-icon-caret-bottom"></i>
             </div>
             <el-dropdown-menu class="user-dropdown" slot="dropdown">
-                <router-link class="inlineBlock" to="/">
-                    <el-dropdown-item>
-                        Home
-                    </el-dropdown-item>
-                </router-link>
-                <el-dropdown-item divided>
-                    <span @click="logout" style="display:block;">LogOut</span>
-                </el-dropdown-item>
+              <router-link class="inlineBlock" to="/">
+                <el-dropdown-item>首页</el-dropdown-item>
+              </router-link>
+              <el-dropdown-item divided>
+                <span @click="logout" >退出</span>
+              </el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
     </el-menu>

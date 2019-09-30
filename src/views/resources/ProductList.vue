@@ -27,63 +27,79 @@
             </el-tree>
           </div>
         </el-col>
-        <el-col :span="18">
-          <el-form ref="productForm" size="mini" :model="productForm" label-width="100px" v-show="showForm" :rules="productRules">
-            <el-form-item label="业务线名称" prop="service_name">
-                  <el-input v-model="productForm.service_name"  :disabled="disabled" placeholder="请输入业务线名称"></el-input>
+        <el-col :span="9">
+          <el-card style="height: 380px">
+            <el-form ref="productForm"
+                     size="mini"
+                     :model="productForm"
+                     label-width="100px"
+                     v-show="showForm"
+                     :rules="productRules">
+              <el-form-item label="业务线名称" prop="service_name">
+                <el-input v-model="productForm.service_name"  :disabled="disabled" placeholder="请输入业务线名称"></el-input>
               </el-form-item>
               <el-form-item label="字母简称" prop="module_letter">
-                  <el-input v-model="productForm.module_letter"  :disabled="disabled" placeholder="请输入字母简称"></el-input>
+                <el-input v-model="productForm.module_letter"  :disabled="disabled" placeholder="请输入字母简称"></el-input>
               </el-form-item>
               <el-form-item label="上级业务线" prop="pid">
-                  <el-select class="select" v-model="productForm.pid"  :disabled="disabled" placeholder="上级业务线">
-                    <el-option
-                      v-for="(item, index) in productLevel"
-                      :key="index"
-                      :label="item.service_name"
-                      :value="item.id">
-                    </el-option>
-                  </el-select>
+                <el-select class="select" v-model="productForm.pid"  :disabled="disabled" placeholder="上级业务线">
+                  <el-option
+                    v-for="(item, index) in productLevel"
+                    :key="index"
+                    :label="item.service_name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="运维接口人" prop="op_interface">
-                  <el-select multiple class="select" v-model="productForm.op_interface"  :disabled="disabled" filterable placeholder="请选择">
-                    <el-option v-for="(item, index) in userList"
-                               :key="index"
-                               :label="item.name"
-                               :value="item.id">
-                        <span style="float: left">{{ item.name }}</span>
-                        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.email }}</span>
-                    </el-option>
-                  </el-select>
+                <el-select multiple class="select" v-model="productForm.op_interface"  :disabled="disabled" filterable placeholder="请选择">
+                  <el-option v-for="(item, index) in userList"
+                             :key="index"
+                             :label="item.name"
+                             :value="item.id">
+                    <span style="float: left">{{ item.name }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.email }}</span>
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="业务接口人" prop="dev_interface">
-                  <el-select multiple class="select" v-model="productForm.dev_interface" size="mini" :disabled="disabled" filterable placeholder="请选择">
-                    <el-option
-                      v-for="(item, index) in userList"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.id"
-                      size="mini">
-                        <span style="float: left">{{ item.name }}</span>
-                        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.email }}</span>
-                    </el-option>
-                  </el-select>
+                <el-select multiple class="select" v-model="productForm.dev_interface" size="mini" :disabled="disabled" filterable placeholder="请选择">
+                  <el-option
+                    v-for="(item, index) in userList"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.id"
+                    size="mini">
+                    <span style="float: left">{{ item.name }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.email }}</span>
+                  </el-option>
+                </el-select>
               </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitClick" :disabled="disabled">提交</el-button>
-              <el-button type="primary" @click="editClick" :disabled="buttonDisabled">修改</el-button>
-              <el-button type="primary" @click="deleteClick" :disabled="buttonDisabled">删除</el-button>
-            </el-form-item>
-          </el-form>
-          <product-table v-bind:serverListLoading="serverListLoading"
-                         v-bind:serverList="serverList"
-                         v-bind:showServerListTable="showServerListTable"
-                         v-bind:serverListPage="serverListPage"
-                         @paginationChange="paginationChange"
-                         v-bind:serverListTotalNum="serverListTotalNum">
-          </product-table>
+              <el-form-item>
+                <el-button type="primary" @click="submitClick" :disabled="disabled">提交</el-button>
+                <el-button type="primary" @click="editClick" :disabled="buttonDisabled">修改</el-button>
+                <el-button type="danger" @click="deleteClick" :disabled="buttonDisabled">删除</el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
+          <el-card style="height: 380px">
+            <pie-chart :chart-data="pieData" ></pie-chart>
+          </el-card>
         </el-col>
-
+        <el-col :span="9">
+          <el-card>
+            <div slot="header">
+              <span>资源列表</span>
+            </div>
+            <product-table v-bind:serverListLoading="serverListLoading"
+                           v-bind:serverList="serverList"
+                           v-bind:showServerListTable="showServerListTable"
+                           v-bind:serverListPage="serverListPage"
+                           @paginationChange="paginationChange"
+                           v-bind:serverListTotalNum="serverListTotalNum">
+            </product-table>
+          </el-card>
+        </el-col>
       </el-row>
     </div>
 </template>
@@ -91,10 +107,12 @@
 <script>
 import { getUserList } from '@/api/users'
 import { getProductTree, getProductLevel, getProductLevelInfo, addProduct, updateProduct, deleteProductLevelInfo, getResourceList } from '@/api/resource'
+import { getWorkOrderHistCountCheckByProduct } from '@/api/workorder'
 import ProductTable from './product/ProductTable'
+import PieChart from '@/components/Charts/PieChart'
 
 export default {
-  components: { ProductTable },
+  components: { ProductTable, PieChart },
   data() {
     return {
       productFlag: '',
@@ -131,6 +149,7 @@ export default {
       filterText: '',
       productTreeList: [],
       productLevel: [],
+      pieData: [],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -249,6 +268,7 @@ export default {
       })
     },
     treeNodeClick(data) {
+      console.log('tree, data', data)
       this.$refs['productForm'].resetFields()
       getProductLevelInfo(data.id).then(res => {
         const op_interface = []
@@ -274,6 +294,11 @@ export default {
           this.showServerListTable = true
         }
       })
+      getWorkOrderHistCountCheckByProduct({ id: data.id }).then(
+        res => {
+          this.pieData = res
+          console.log(this.pieData)
+        })
     }
   }
 }
@@ -284,6 +309,10 @@ export default {
   }
   .select {
     width: 100%;
+  }
+  .el-card {
+    /*height: 360px;*/
+    margin-bottom: 10px;
   }
 </style>
 

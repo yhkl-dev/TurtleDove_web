@@ -37,6 +37,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <div style="text-align: center; margin-top: 5px ">
+      <el-pagination @current-change="paginationChange"
+                     :pager-count="5"
+                     :page-size="searchForm.page_size"
+                     layout="prev, pager, next"
+                     :current-page.sync="searchForm.page"
+                     :total="workOrderModelListTotalNum"
+                     v-show="workOrderModelListTotalNum>1">
+      </el-pagination>
+    </div>
     <el-dialog title="编辑模板"  :visible.sync="updateDialogVisible" width="20%" center>
       <el-form ref="changeModelForm" :model="changeModelForm" label-width="80px">
         <el-form-item prop="model_create_time" label="创建时间">
@@ -105,7 +115,7 @@
 
   export default {
     name: 'workOrderModelManager',
-    props: ['workOrderModelList', 'templateWorkOrderTypeList', 'templateWorkOrderFlowTypeList'],
+    props: ['workOrderModelList', 'templateWorkOrderTypeList', 'templateWorkOrderFlowTypeList', 'workOrderModelListTotalNum'],
     data() {
       return {
         updateDialogVisible: false,
@@ -123,6 +133,10 @@
           mode_status: 1,
           order_type: '',
           order_flow_type: ''
+        },
+        searchForm: {
+          page: 1,
+          page_size: 8
         }
       }
     },
@@ -133,12 +147,14 @@
             message: '操作成功',
             type: 'success'
           })
-          this.$emit('fresh')
+          this.$emit('fresh', this.searchForm)
         })
       },
+      paginationChange(val) {
+        this.searchForm.page = val
+        this.$emit('fresh', this.searchForm)
+      },
       handleEditWorkOrderModel(row) {
-        console.log(this.templateWorkOrderTypeLists)
-        console.log('change work order model')
         this.updateDialogVisible = true
         if (this.$refs['changeModelForm'] !== undefined) {
           this.$refs['changeModelForm'].resetFields()
@@ -157,7 +173,7 @@
               type: 'success'
             })
             this.updateDialogVisible = false
-            this.$emit('fresh')
+            this.$emit('fresh', this.searchForm)
           })
         })
       },
@@ -175,7 +191,7 @@
               message: '添加成功',
               type: 'success'
             })
-            this.$emit('fresh')
+            this.$emit('fresh', this.searchForm)
           })
         })
       }

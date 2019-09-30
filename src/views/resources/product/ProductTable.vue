@@ -4,24 +4,24 @@
               v-loading="serverListLoading"
               element-loading-text="拼命加载中"
               :data="serverList"
-              border
+              :show-header="false"
               v-show="showServerListTable">
       <el-table-column  prop="resource_name"
                         label="资源名称"
-                        align="center">
+                        align="left">
       </el-table-column>
       <el-table-column  prop="manage_ip"
                         label="管理IP"
                         align="center">
       </el-table-column>
-      <el-table-column  prop="status"
-                        label="状态"
-                        align="center">
-      </el-table-column>
-      <el-table-column  prop="last_check"
-                        label="LAST CHECK"
-                        align="center">
-      </el-table-column>
+<!--      <el-table-column  prop="status"-->
+<!--                        label="状态"-->
+<!--                        align="center">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column  prop="last_check"-->
+<!--                        label="LAST CHECK"-->
+<!--                        align="center">-->
+<!--      </el-table-column>-->
     </el-table>
     <div class="text-center" v-show="serverListTotalNum>=10">
       <el-pagination background

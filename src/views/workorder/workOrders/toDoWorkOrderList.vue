@@ -29,7 +29,7 @@
       <el-table-column label="工单id"
                        prop="order_task_id"
                        align="center"
-                       width="200px">
+                       width="180px">
       </el-table-column>
       <el-table-column label="工单标题"
                        prop="order_title"
@@ -37,6 +37,7 @@
       </el-table-column>
       <el-table-column label="工单类型"
                        prop="order_model"
+                       width="100px"
                        align="center">
       </el-table-column>
       <el-table-column label="产品线"
@@ -58,19 +59,18 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="当前执行用户"
+      <el-table-column label="当前执行"
                        prop="current_exec_user"
+                       width="80px"
                        align="center">
       </el-table-column>
-      <el-table-column label="创建时间"
-                       prop="create_time"
-                       align="center">
-      </el-table-column>
-      <el-table-column label="上次更新时间"
+      <el-table-column label="最近更新"
                        prop="update_time"
+                       width="160px"
                        align="center">
       </el-table-column>
       <el-table-column label="工单状态"
+                       width="150px"
                        align="center">
         <template slot-scope="scope" >
           <el-tag>{{ scope.row.status_name }} </el-tag>
@@ -78,7 +78,7 @@
       </el-table-column>
       <el-table-column label="操作"
                        align="center"
-                       width="150px">
+                       width="50px">
         <template slot-scope="scope">
           <el-button type="primary"
                      plain

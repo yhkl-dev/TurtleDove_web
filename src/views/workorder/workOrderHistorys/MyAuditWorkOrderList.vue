@@ -46,21 +46,19 @@
     <el-table :data="workOrderAuditHistoryList"
               v-loading="auditLoading"
               highlight-current-row>
-      <el-table-column label="工单id"
+      <el-table-column label="工单 ID"
                        prop="order_task_id"
                        align="center"
                        width="200px">
       </el-table-column>
-      <el-table-column label="工单标题"
-                       prop="order_title"
-                       align="center">
-      </el-table-column>
       <el-table-column label="工单类型"
                        prop="order_model"
+                       width="100px"
                        align="center">
       </el-table-column>
       <el-table-column label="申请人"
                        prop="created_user"
+                       width="80px"
                        align="center">
       </el-table-column>
       <el-table-column label="产品线"
@@ -82,20 +80,18 @@
 
         </template>
       </el-table-column>
-      <el-table-column label="最终审核用户"
+      <el-table-column label="最终审核"
                        prop="current_audit_user"
-                       align="center">
-      </el-table-column>
-      <el-table-column label="最终执行用户"
-                       prop="current_exec_user"
-                       align="center">
-      </el-table-column>
-      <el-table-column label="创建时间"
-                       prop="create_time"
                        align="center">
       </el-table-column>
       <el-table-column label="最后更新时间"
                        prop="update_time"
+                       width="150px"
+                       align="center">
+      </el-table-column>
+      <el-table-column label="流转完成时间"
+                       prop="complete_time"
+                       width="150px"
                        align="center">
       </el-table-column>
       <el-table-column label="工单状态"

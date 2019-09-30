@@ -1,6 +1,7 @@
 <template>
-  <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px">
-    <div style="margin-top: 20px; margin-bottom: 20px">
+  <div class="app-container">
+<!--    <div style="margin-top: 20px; margin-bottom: 20px">-->
+    <div class="filter-container">
       <el-row>
         <el-button type="primary"
                    size="small"
@@ -71,8 +72,8 @@
 
     <el-table v-loading="loading" element-loading-text="拼命加载中" :data="resourceList"  style="width: 100%">
       <el-table-column prop="resource_name"  label="资源名称"></el-table-column>
-      <el-table-column prop="service.name"   label="业务线" align="center"></el-table-column>
-      <el-table-column prop="server_purpose.name" label="产品线" align="center"></el-table-column>
+      <el-table-column prop="service.name"   label="业务线" align="center" width="150px"></el-table-column>
+      <el-table-column prop="server_purpose.name" label="产品线" align="center" width="300px"></el-table-column>
       <el-table-column label="资源类型" width="80px">
         <template slot-scope="scope">
           <div>
@@ -82,15 +83,15 @@
         </template>
       </el-table-column>
       <el-table-column prop="belong_user" label="所属用户"  width="80px" align="center"></el-table-column>
-      <el-table-column prop="manage_ip" label="管理IP"  width="200px"   align="center"></el-table-column>
-      <el-table-column prop="inner_ip" label="内网ip"  width="200px"  align="center"></el-table-column>
-      <el-table-column prop="description" label="描述"  width="300px" align="center"></el-table-column>
+      <el-table-column prop="manage_ip" label="管理IP"  width="120px"   align="center"></el-table-column>
+      <el-table-column prop="inner_ip" label="内网ip"  width="120px"  align="center"></el-table-column>
+      <el-table-column prop="description" label="描述"  width="200px" align="center"></el-table-column>
       <el-table-column prop="add_time" label="添加时间"  width="160px"  align="center"></el-table-column>
-      <el-table-column prop="" label="操作" align="center" width="350px">
+      <el-table-column prop="" label="操作" align="center" width="200px">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="showResourceUser(scope.row)">资源用户</el-button>
-          <el-button size="small" type="success" @click="handleEditClick(scope.row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="handlerDeleteResource(scope.row)">删除</el-button>
+          <el-button size="small" type="primary" icon="el-icon-user" circle @click="showResourceUser(scope.row)"></el-button>
+          <el-button size="small" type="success" icon="el-icon-edit" circle @click="handleEditClick(scope.row)"></el-button>
+          <el-button size="small" type="danger" icon="el-icon-delete" circle @click="handlerDeleteResource(scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -351,7 +352,7 @@ export default {
           this.loading = false
         }
       )
-      getResourceTypeList(params).then(
+      getResourceTypeList().then(
         res => {
           this.resourceTypeList = res.results
         }

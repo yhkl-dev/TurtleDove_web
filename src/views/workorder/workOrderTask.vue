@@ -14,15 +14,6 @@
       </el-tab-pane>
     </el-tabs>
     <el-tabs type="border-card">
-      <el-tab-pane label="待执行工单">
-        <to-do-work-order-list v-bind:execWorkOrderTaskList="execWorkOrderTaskList"
-                               v-bind:taskToDoTotalNum="taskToDoTotalNum"
-                               v-bind:toDoListLoading="toDoListLoading"
-                               @refreshToDoList="refreshToDoList">
-        </to-do-work-order-list>
-      </el-tab-pane>
-    </el-tabs>
-    <el-tabs type="border-card">
       <el-tab-pane label="待审核工单">
         <to-audit-work-order-list v-bind:auditWorkOrderTaskList="auditWorkOrderTaskList"
                                   v-bind:auditListLoading="auditListLoading"
@@ -31,6 +22,16 @@
         </to-audit-work-order-list>
       </el-tab-pane>
     </el-tabs>
+    <el-tabs type="border-card">
+      <el-tab-pane label="待执行工单">
+        <to-do-work-order-list v-bind:execWorkOrderTaskList="execWorkOrderTaskList"
+                               v-bind:taskToDoTotalNum="taskToDoTotalNum"
+                               v-bind:toDoListLoading="toDoListLoading"
+                               @refreshToDoList="refreshToDoList">
+        </to-do-work-order-list>
+      </el-tab-pane>
+    </el-tabs>
+
   </div>
 
 </template>

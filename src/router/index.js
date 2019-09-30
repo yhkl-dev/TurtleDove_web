@@ -19,7 +19,7 @@ const Login = () => import('@/views/login/Login')
 const Page = () => import('@/views/404')
 
 /* users */
-const Dashboard = () => import('@/views/dashboard/Dashboard')
+const Dashboard = () => import('@/views/dashboard/index')
 const UserList = () => import('@/views/users/UserList')
 const GroupList = () => import('@/views/users/GroupList')
 const GroupPermissionList = () => import('@/views/users/GroupPermissionList')
@@ -43,6 +43,7 @@ const ServerReport = () => import('@/views/report/ServerReport')
 const WorkOrderTask = () => import('@/views/workorder/workOrderTask')
 const WorkOrderModelManagement = () => import('@/views/workorder/WorkOrderModelManagement')
 const workOrderHistory = () => import('@/views/workorder/workOrderHistory')
+const workOrderChart = () => import('@/views/workorder/workOrderChart')
 
 /* 项目管理*/
 const ProjectList = () => import('@/views/project/ProjectList')
@@ -160,6 +161,12 @@ export const constantRouterMap = [
         component: workOrderHistory,
         name: '工单历史',
         meta: { title: '工单历史', icon: 'order' }
+      },
+      {
+        path: 'work_order_chart',
+        component: workOrderChart,
+        name: '工单历史趋势',
+        meta: { title: '工单历史趋势', icon: 'order' }
       }
     ]
   },

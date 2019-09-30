@@ -24,11 +24,24 @@
       height: {
         type: String,
         default: '200px'
+      },
+      chartData: {
+        type: Object,
+        required: true
       }
     },
     data() {
       return {
-        chart: null
+        chart: null,
+        colorList: ['rgba(255,144,128,1)', 'rgba(0,191,183,1)', 'rgba(106,90,205,1)', 'rgba(135,206,235,1)']
+      }
+    },
+    watch: {
+      chartData: {
+        deep: true,
+        handler() {
+          this.initChart()
+        }
       }
     },
     mounted() {
@@ -42,23 +55,73 @@
       this.chart = null
     },
     methods: {
-      initChart() {
+      getRandomColor() {
+        return this.colorList[Math.floor(Math.random() * 4)]
+      },
+      initChart: function() {
         this.chart = echarts.init(document.getElementById(this.id))
-        const xData = (function() {
-          const data = []
-          for (let i = 1; i < 13; i++) {
-            data.push(i + 'month')
+        const totalLineData = {
+          name: '总计',
+          type: 'line',
+          stack: 'total',
+          symbolSize: 10,
+          symbol: 'circle',
+          itemStyle: {
+            normal: {
+              color: 'rgba(255,127,80,1)',
+              barBorderRadius: 0,
+              label: {
+                show: true,
+                position: 'top',
+                formatter(p) {
+                  return p.value > 0 ? p.value : ''
+                }
+              }
+            }
+          },
+          data: this.chartData.total_data_list
+        }
+        const legendList = []
+        const xData = []
+        console.log('count_data_dict', this.chartData.count_data_dict)
+        this.chartData.count_data_dict.forEach(item => {
+          const lineData = {
+            name: '',
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
+            barGap: '10%',
+            itemStyle: {
+              normal: {
+                color: this.getRandomColor(),
+                label: {
+                  show: true,
+                  textStyle: {
+                    color: '#fff'
+                  },
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: ''
           }
-          return data
-        }())
+          lineData.name = item.name
+          lineData.data = item.value_list
+          xData.push(lineData)
+          legendList.push(item.name)
+        })
+        xData.push(totalLineData)
         this.chart.setOption({
-          backgroundColor: '#344b58',
+          backgroundColor: '#ffffff',
           title: {
-            text: 'statistics',
+            text: '工单历史统计',
             x: '20',
             top: '20',
             textStyle: {
-              color: '#fff',
+              color: '#000',
               fontSize: '22'
             },
             subtextStyle: {
@@ -90,7 +153,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['female', 'male', 'average']
+            data: legendList
           },
           calculable: true,
           xAxis: [{
@@ -110,10 +173,13 @@
               show: false
             },
             axisLabel: {
-              interval: 0
-
+              axisLabel: {
+                formatter: function(value) {
+                  return value.split('').join('\n')
+                }
+              }
             },
-            data: xData
+            data: this.chartData.date_list
           }],
           yAxis: [{
             type: 'value',
@@ -151,7 +217,8 @@
 
             },
             textStyle: {
-              color: '#fff' },
+              color: '#fff'
+            },
             borderColor: '#90979c'
 
           }, {
@@ -161,109 +228,7 @@
             start: 1,
             end: 35
           }],
-          series: [{
-            name: 'female',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            barGap: '10%',
-            itemStyle: {
-              normal: {
-                color: 'rgba(255,144,128,1)',
-                label: {
-                  show: true,
-                  textStyle: {
-                    color: '#fff'
-                  },
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: [
-              709,
-              1917,
-              2455,
-              2610,
-              1719,
-              1433,
-              1544,
-              3285,
-              5208,
-              3372,
-              2484,
-              4078
-            ]
-          },
-
-          {
-            name: 'male',
-            type: 'bar',
-            stack: 'total',
-            itemStyle: {
-              normal: {
-                color: 'rgba(0,191,183,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'top',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: [
-              327,
-              1776,
-              507,
-              1200,
-              800,
-              482,
-              204,
-              1390,
-              1001,
-              951,
-              381,
-              220
-            ]
-          }, {
-            name: 'average',
-            type: 'line',
-            stack: 'total',
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,230,48,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'top',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: [
-              1036,
-              3693,
-              2962,
-              3810,
-              2519,
-              1915,
-              1748,
-              4675,
-              6209,
-              4323,
-              2865,
-              4298
-            ]
-          }
-          ]
+          series: xData
         })
       }
     }

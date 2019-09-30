@@ -174,3 +174,10 @@ export function getProductList() {
     method: 'get'
   })
 }
+
+export function getSystemInfo() {
+  return request({
+    url: '/systemInfo/',
+    method: 'get'
+  })
+}

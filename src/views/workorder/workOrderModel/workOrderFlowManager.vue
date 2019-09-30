@@ -7,9 +7,13 @@
                    size="mini"
                    type="text"
                    icon="el-icon-plus"
-                   @click="handleAddOrderFlowItem">添加</el-button>
+                   @click="handleAddOrderFlowItem">添加
+        </el-button>
       </div>
-      <el-table  :show-header="false" :data="templateWorkOrderFlowList" @row-dblclick="handleEditFlowItem" >
+
+      <el-table  :show-header="false"
+                 :data="templateWorkOrderFlowList"
+                 @row-dblclick="handleEditFlowItem" >
         <el-table-column label="" width="40px">
           <template slot-scope="scope">
             <el-tooltip >
@@ -21,18 +25,31 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="flow_name" label="执行流程" ></el-table-column>
-        <el-table-column label="执行流程" align="center" >
+        <el-table-column prop="flow_name"
+                         label="执行流程">
+        </el-table-column>
+        <el-table-column label="执行流程"
+                         align="right">
           <template slot-scope="scope">
           <span v-if="scope.row.flow_type_name === 0">
-            <el-tag size="mini" type="danger">{{ scope.row.flow_type }}</el-tag>
+            <el-tag size="mini" type="success">{{ scope.row.flow_type }}</el-tag>
           </span>
             <span v-else>
-            <el-tag size="mini" type="info">{{ scope.row.flow_type }}</el-tag>
+            <el-tag size="mini" type="danger">{{ scope.row.flow_type }}</el-tag>
           </span>
           </template>
         </el-table-column>
       </el-table>
+      <div style="text-align: center; margin-top: 5px ">
+        <el-pagination @current-change="paginationChange"
+                       :pager-count="5"
+                       :page-size="searchForm.page_size"
+                       layout="prev, pager, next"
+                       :current-page.sync="searchForm.page"
+                       :total="templateWorkOrderFlowListTotalNum"
+                       v-show="templateWorkOrderFlowListTotalNum>0">
+        </el-pagination>
+      </div>
       <el-dialog title="添加流程" :visible.sync="addOrderFlowItemVisible" width="30%">
         <el-form ref="addFlowTypeItemForm" :rules="rules" :model="addFlowTypeItemForm" label-width="70px">
           <el-form-item prop="flow_name" label="流程名称 " label-width="80px">
@@ -180,7 +197,7 @@
 
   export default {
     name: 'workOrderFlowManager',
-    props: ['templateWorkOrderFlowList', 'userList'],
+    props: ['templateWorkOrderFlowList', 'userList', 'templateWorkOrderFlowListTotalNum'],
     data() {
       return {
         addOrderFlowVisible: false,
@@ -213,6 +230,10 @@
           change_time: '',
           create_time: ''
         },
+        searchForm: {
+          page: 1,
+          page_size: 8
+        },
         addFlowTypeItemForm: {
           flow_name: '',
           flow_type: ''
@@ -240,6 +261,10 @@
         if (this.$ref['addFlowTypeItemForm'] !== undefined) {
           this.$ref['addFlowTypeItemForm'].resetFields()
         }
+      },
+      paginationChange(val) {
+        this.searchForm.page = val
+        this.$emit('fresh', this.searchForm)
       },
       handleSubmitAddFlowTypeItemForm() {
         addTemplateWorkOrderTaskFlow(this.addFlowTypeItemForm).then(() => {

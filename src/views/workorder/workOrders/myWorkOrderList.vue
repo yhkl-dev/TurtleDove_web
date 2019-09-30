@@ -72,10 +72,10 @@
               v-loading="loading"
               highlight-current-row
               border>
-      <el-table-column label="工单id"
+      <el-table-column label="工单 ID"
                        prop="order_task_id"
                        align="center"
-                       width="200px">
+                       width="180px">
       </el-table-column>
       <el-table-column label="工单标题"
                        prop="order_title"
@@ -83,6 +83,7 @@
       </el-table-column>
       <el-table-column label="工单类型"
                        prop="order_model"
+                       width="100px"
                        align="center">
       </el-table-column>
       <el-table-column label="产品线"
@@ -97,40 +98,41 @@
                        width="150px"
                        align="center">
         <template slot-scope="scope">
-<!--          {{ scope.row.order_env_type }}-->
           <span v-for="item in scope.row.order_env_type">
             <el-tag size="mini"> {{ item.name }}</el-tag>
             <span> </span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="当前执行用户"
-                       width="120px"
+      <el-table-column label="当前执行"
+                       width="80px"
                        align="center">
         <template slot-scope="scope">
           {{ scope.row.current_exec_user || '——' }}
         </template>
       </el-table-column>
-      <el-table-column label="当前审核用户"
-                       width="120px"
+      <el-table-column label="当前审核"
+                       width="80px"
                        align="center">
         <template slot-scope="scope">
           {{ scope.row.current_audit_user || '——' }}
         </template>
       </el-table-column>
-      <el-table-column label="上次更新时间"
+      <el-table-column label="最近更新"
                        prop="update_time"
+                       width="160px"
                        align="center">
       </el-table-column>
       <el-table-column label="工单状态"
-                        align="center">
+                       width="150px"
+                       align="center">
         <template slot-scope="scope" >
           <el-tag>{{ scope.row.status_name }} </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作"
                        align="center"
-                       width="150px">
+                       width="140px">
         <template slot-scope="scope">
           <el-button type="primary"
                      plain
@@ -160,9 +162,9 @@
       <template slot="title">
         <span><h3>工单详情</h3></span>
       </template>
-      <work-order-detail  v-bind:workOrderDetail="workOrderDetail"
-                          @replyWorkOrderTaskForm="replyWorkOrderTaskForm"
-                          @handleWorkOrderOperation="handleWorkOrderOperation">
+      <work-order-detail v-bind:workOrderDetail="workOrderDetail"
+                         @replyWorkOrderTaskForm="replyWorkOrderTaskForm"
+                         @handleWorkOrderOperation="handleWorkOrderOperation">
       </work-order-detail>
     </el-dialog>
     <el-dialog title="新建工单"
@@ -170,21 +172,22 @@
                :visible.sync="workOrderTaskVisible"
                width="40%" >
       <el-form ref="addWorkOrderTaskForm"
+               :rules="rules"
                :model="addWorkOrderTaskForm"
-               label-width="100px">
-        <el-form-item label="工单标题">
+               label-width="110px">
+        <el-form-item label="工单标题" prop="order_title">
           <el-input v-model="addWorkOrderTaskForm.order_title"
                     placeholder="请输入工单标题">
           </el-input>
         </el-form-item>
-        <el-form-item label="工单需求">
+        <el-form-item label="工单需求"  prop="order_purpose">
           <el-input v-model="addWorkOrderTaskForm.order_purpose"
                     type="textarea"
                     :rows="8"
                     placeholder="请输入工单需求">
           </el-input>
         </el-form-item>
-        <el-form-item label='工单类型'>
+        <el-form-item label='工单类型' prop="template_order_model">
           <el-select v-model="addWorkOrderTaskForm.template_order_model"
                      style="width: 100%" placeholder="请选择工单类型">
             <el-option v-for="(item, index) in workOrderModelList"
@@ -206,7 +209,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="资源环境类型">
+        <el-form-item label="资源环境类型" prop="order_products">
           <el-select v-model="addWorkOrderTaskForm.order_products"
                      style="width: 100%"
                      placeholder="请选择资源环境类型">
@@ -217,7 +220,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="项目">
+        <el-form-item label="项目" prop="order_project">
           <el-select v-model="addWorkOrderTaskForm.order_project"
                      style="width: 100%"
                      placeholder="请选择项目">
@@ -316,9 +319,6 @@
             </el-option>
           </el-select>
         </el-form-item>
-<!--        <el-form-item label="附件" prop="editWorkOrderTaskForm.order_files">-->
-<!--          <el-input size="mini" v-model="editWorkOrderTaskForm.order_files" disabled></el-input>-->
-<!--        </el-form-item>-->
         <el-form-item label="上传附件" prop="order_files">
           <el-input size="mini" v-model="editWorkOrderTaskForm.order_files" disabled></el-input>
           <el-upload ref="upload"
@@ -430,7 +430,27 @@
         },
         dateValue: '',
         upLoadUrl: '',
-        oldValue: ''
+        oldValue: '',
+        rules: {
+          order_title: [
+            { required: true, message: '请输入工单标题', trigger: 'blur' }
+          ],
+          order_purpose: [
+            { required: true, message: '请输入需求描述', trigger: 'blur' }
+          ],
+          template_order_model: [
+            { required: true, message: '请选择工单类型', trigger: 'change' }
+          ],
+          order_env_type: [
+            { required: true, message: '请至少选择一个平台环境类型', trigger: 'change' }
+          ],
+          order_products: [
+            { required: true, message: '请选择资源环境类型', trigger: 'change' }
+          ],
+          order_project: [
+            { required: true, message: '请选择项目', trigger: 'change' }
+          ]
+        }
       }
     },
     methods: {
@@ -487,19 +507,36 @@
         }
       },
       handleCommitAddWorkOrderTask: function() {
-        console.log('addWorkOrderTaskForm', this.addWorkOrderTaskForm)
-        const formData = new FormData()
-        formData.append('order_title', this.addWorkOrderTaskForm.order_title)
-        formData.append('order_purpose', this.addWorkOrderTaskForm.order_purpose)
-        formData.append('order_env_type', this.addWorkOrderTaskForm.order_env_type.toString())
-        formData.append('order_products', this.addWorkOrderTaskForm.order_products)
-        formData.append('order_project', this.addWorkOrderTaskForm.order_project)
-        formData.append('order_status', this.addWorkOrderTaskForm.order_status)
-        formData.append('template_order_model', this.addWorkOrderTaskForm.template_order_model)
-        formData.append('order_files', this.addWorkOrderTaskForm.order_files)
-        console.log(formData)
-        this.$emit('handleCommitAddWorkOrderTask', formData)
-        this.workOrderTaskVisible = false
+        this.$refs['addWorkOrderTaskForm'].validate((valid) => {
+          if (valid) {
+            console.log('addWorkOrderTaskForm', this.addWorkOrderTaskForm)
+            const formData = new FormData()
+            formData.append('order_title', this.addWorkOrderTaskForm.order_title)
+            formData.append('order_purpose', this.addWorkOrderTaskForm.order_purpose)
+            formData.append('order_env_type', this.addWorkOrderTaskForm.order_env_type.toString())
+            formData.append('order_products', this.addWorkOrderTaskForm.order_products)
+            formData.append('order_project', this.addWorkOrderTaskForm.order_project)
+            formData.append('order_status', this.addWorkOrderTaskForm.order_status)
+            formData.append('template_order_model', this.addWorkOrderTaskForm.template_order_model)
+            formData.append('order_files', this.addWorkOrderTaskForm.order_files)
+            console.log(formData)
+            this.$emit('handleCommitAddWorkOrderTask', formData)
+            this.workOrderTaskVisible = false
+          }
+        })
+        // console.log('addWorkOrderTaskForm', this.addWorkOrderTaskForm)
+        // const formData = new FormData()
+        // formData.append('order_title', this.addWorkOrderTaskForm.order_title)
+        // formData.append('order_purpose', this.addWorkOrderTaskForm.order_purpose)
+        // formData.append('order_env_type', this.addWorkOrderTaskForm.order_env_type.toString())
+        // formData.append('order_products', this.addWorkOrderTaskForm.order_products)
+        // formData.append('order_project', this.addWorkOrderTaskForm.order_project)
+        // formData.append('order_status', this.addWorkOrderTaskForm.order_status)
+        // formData.append('template_order_model', this.addWorkOrderTaskForm.template_order_model)
+        // formData.append('order_files', this.addWorkOrderTaskForm.order_files)
+        // console.log(formData)
+        // this.$emit('handleCommitAddWorkOrderTask', formData)
+        // this.workOrderTaskVisible = false
       },
       replyWorkOrderTaskForm(data) {
         addWorkOrderOperation(data).then(res => {

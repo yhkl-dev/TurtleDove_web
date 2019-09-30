@@ -26,16 +26,17 @@
               v-loading="auditListLoading"
               highlight-current-row
               border>
-      <el-table-column label="工单id"
+      <el-table-column label="工单 ID"
                        prop="order_task_id"
                        align="center"
-                       width="200px">
+                       width="180px">
       </el-table-column>
       <el-table-column label="工单标题"
                        prop="order_title"
                        align="center">
       </el-table-column>
       <el-table-column label="工单类型"
+                       width="100px"
                        prop="order_model"
                        align="center">
       </el-table-column>
@@ -58,19 +59,18 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="当前审核用户"
+      <el-table-column label="当前审核"
                        prop="current_audit_user"
+                       width="80px"
                        align="center">
       </el-table-column>
-      <el-table-column label="创建时间"
-                       prop="create_time"
-                       align="center">
-      </el-table-column>
-      <el-table-column label="上次更新时间"
+      <el-table-column label="最近更新"
+                       width="160px"
                        prop="update_time"
                        align="center">
       </el-table-column>
       <el-table-column label="工单状态"
+                       width="150px"
                        align="center">
         <template slot-scope="scope" >
           <el-tag>{{ scope.row.status_name }} </el-tag>
@@ -78,7 +78,7 @@
       </el-table-column>
       <el-table-column label="操作"
                        align="center"
-                       width="150px">
+                       width="50px">
         <template slot-scope="scope">
           <el-button type="primary"
                      plain
