@@ -1,50 +1,167 @@
 <template>
-    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px">
+    <div class="app-container">
       <div class="filter-container">
-        <el-select v-model="searchForms.currentTaskType" placeholder="任务模式"  style="width: 150px" size="small" default-first-option @change="HandleTaskTypeChange">
-          <el-option v-for="item in taskType" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-select v-model="searchForms.status" placeholder="执行状态" clearable style="width: 150px" size="small" default-first-option >
-          <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-input v-model="searchForms.name" placeholder="任务名称" style="width: 200px;" size="small" @keyup.enter.native="handleFilter" />
-        <el-button type="info" size='small' style="margin-left: 10px" icon="el-icon-search" @click="handleFilter" plain>搜索</el-button>
-        <el-button size='small' type="info" icon="el-icon-edit" @click="handleAddBtn" plain>添加</el-button>
-      </div>
-      <el-tabs v-model="activeName"  type="border-card" >
-        <el-tab-pane label="Playbook" name="Playbook" >
-         <PlaybookTask v-bind:params="params"
-                       v-bind:taskList="taskList"
-                       v-bind:statusOptions="statusOptions"
-                       v-bind:totalNum="totalNum"
-                       @handleCurrentPlaybookChange="handleCurrentPlaybookChange"
-                       @handleEditPlaybookClick="handleEditPlaybookClick"
-                       @handleDeletePlaybookClick="handleDeletePlaybookClick">
+        <el-row :gutter="24">
+          <el-col :span="3">
+            <el-select
+              v-model="searchForms.currentTaskType"
+              placeholder="任务模式"
+              size="small"
+              default-first-option
+              @change="HandleTaskTypeChange">
+              <el-option
+                v-for="item in taskType"
+                :key="item"
+                :label="item"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="3">
+            <el-select
+              v-model="searchForms.currentTaskType"
+              placeholder="任务模式"
+              size="small"
+              default-first-option
+              @change="HandleTaskTypeChange">
+              <el-option
+                v-for="item in taskType"
+                :key="item"
+                :label="item"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="3">
+            <el-select
+              v-model="searchForms.currentTaskType"
+              placeholder="任务模式"
+              size="small"
+              default-first-option
+              @change="HandleTaskTypeChange">
+              <el-option
+                v-for="item in taskType"
+                :key="item"
+                :label="item"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="3">
+            <el-select
+              v-model="searchForms.status"
+              placeholder="执行状态"
+              clearable
+              size="small"
+              default-first-option >
+              <el-option
+                v-for="item in statusOptions"
+                :key="item"
+                :label="item"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="3">
+            <el-input
+              v-model="searchForms.name"
+              placeholder="任务名称"
+              style="width: 200px;" size="small" @keyup.enter.native="handleFilter" >
+            </el-input>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button
+              type="primary"
+              size='small'
+              icon="el-icon-search"
+              @click="handleFilter">
+              搜 索
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button
+              size='small'
+              type="primary"
+              icon="el-icon-edit"
+              @click="handleAddBtn">
+              添 加
+            </el-button>
+          </el-col>
+        </el-row>
 
-         </PlaybookTask>
+      </div>
+      <el-tabs
+        v-model="activeName"
+        type="border-card">
+        <el-tab-pane
+          label="Playbook"
+          name="Playbook" >
+          <PlaybookTask
+            v-bind:params="params"
+            v-bind:taskList="taskList"
+            v-bind:statusOptions="statusOptions"
+            v-bind:totalNum="totalNum"
+            @handleCurrentPlaybookChange="handleCurrentPlaybookChange"
+            @handleEditPlaybookClick="handleEditPlaybookClick"
+            @handleDeletePlaybookClick="handleDeletePlaybookClick">
+          </PlaybookTask>
         </el-tab-pane>
-        <el-tab-pane label="Ad-hoc" name="Ad-hoc">
-          <AdhocTask v-bind:params="params"
-                     v-bind:adhocTaskLists="adhocTaskLists"
-                     v-bind:statusOptions="statusOptions"
-                     v-bind:adhocTotalNum="adhocTotalNum"
-                     @handleEditAdhocClick="handleEditAdhocClick"
-                     @handleDeleteAdhocClick="handleDeleteAdhocClick"
-                     @handleCurrentChangeAdhoc="handleCurrentChangeAdhoc">
+        <el-tab-pane
+          label="Ad-hoc"
+          name="Ad-hoc">
+          <AdhocTask
+            v-bind:params="params"
+            v-bind:adhocTaskLists="adhocTaskLists"
+            v-bind:statusOptions="statusOptions"
+            v-bind:adhocTotalNum="adhocTotalNum"
+            @handleEditAdhocClick="handleEditAdhocClick"
+            @handleDeleteAdhocClick="handleDeleteAdhocClick"
+            @handleCurrentChangeAdhoc="handleCurrentChangeAdhoc">
           </AdhocTask>
         </el-tab-pane>
       </el-tabs>
-      <el-dialog title="添加任务" center :visible.sync="dialogVisibleForAdd" width="15%">
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="dialogVisibleForAddPlaybook = true">Playbook</el-button>
-          <el-button type="primary" @click="dialogVisibleForAddAdhoc = true">Ad-hoc</el-button>
+      <el-dialog
+        title="添加任务"
+        center
+        :visible.sync="dialogVisibleForAdd"
+        width="15%">
+        <div
+          slot="footer"
+          class="dialog-footer">
+          <el-button
+            size="small"
+            type="primary"
+            @click="dialogVisibleForAddPlaybook = true">
+            Playbook
+          </el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="dialogVisibleForAddAdhoc = true">
+            Ad-hoc
+          </el-button>
         </div>
-        <el-dialog title="添加Playbook任务" :visible.sync="dialogVisibleForAddPlaybook" :append-to-body="true" width="30%" >
-          <el-form ref="addTaskPolicy" :model="addPlaybookTask"  label-width="100px" >
-            <el-form-item label="任务名称" prop="name">
-              <el-input v-model="addPlaybookTask.name"  placeholder="请输入任务名称" ></el-input>
+        <el-dialog
+          title="添加Playbook任务"
+          center
+          :visible.sync="dialogVisibleForAddPlaybook"
+          :append-to-body="true"
+          width="30%" >
+          <el-form
+            ref="addTaskPolicy"
+            :model="addPlaybookTask"
+            label-width="100px" >
+            <el-form-item
+              label="任务名称"
+              prop="name">
+              <el-input
+                v-model="addPlaybookTask.name"
+                placeholder="请输入任务名称" >
+              </el-input>
             </el-form-item>
-            <el-form-item label="playbook" prop="playbook" >
+            <el-form-item
+              label="playbook"
+              prop="playbook" >
               <el-upload
                 class="upload-demo"
                 ref="upload"
@@ -53,42 +170,99 @@
                 :on-change="handleFileChange"
                 :file-list="fileList"
                 :auto-upload="false">
-                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                <!--<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>-->
-                <div slot="tip" class="el-upload__tip">只能上传yml文件</div>
+                <el-button
+                  slot="trigger"
+                  size="small"
+                  type="primary">选取文件</el-button>
+                <div
+                  slot="tip"
+                  class="el-upload__tip">
+                  只能上传yml文件
+                </div>
               </el-upload>
             </el-form-item>
           </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisibleForAddPlaybook = false">取 消</el-button>
-            <el-button type="primary" @click="handleSubmitAddPlaybookTask">确 定</el-button>
+          <div
+            slot="footer"
+            class="dialog-footer">
+            <el-button
+              size="small"
+              type="primary"
+              @click="handleSubmitAddPlaybookTask">
+              确 定
+            </el-button>
+            <el-button
+              size="small"
+              @click="dialogVisibleForAddPlaybook = false">
+              取 消
+            </el-button>
           </div>
         </el-dialog>
-        <el-dialog title="添加Ad-hoc任务" :visible.sync="dialogVisibleForAddAdhoc" :append-to-body="true" width="30%">
-          <el-form ref="addAdHocTask" :model="addAdHocTask"  label-width="100px" >
-            <el-form-item label="任务名称" prop="name">
-              <el-input v-model="addAdHocTask.name"  placeholder="请输入任务名称" ></el-input>
+        <el-dialog
+          title="添加Ad-hoc任务"
+          center
+          :visible.sync="dialogVisibleForAddAdhoc"
+          :append-to-body="true"
+          width="30%">
+          <el-form
+            ref="addAdHocTask"
+            :model="addAdHocTask"
+            label-width="100px" >
+            <el-form-item
+              label="任务名称"
+              prop="name">
+              <el-input
+                v-model="addAdHocTask.name"
+                placeholder="请输入任务名称" >
+              </el-input>
             </el-form-item>
-            <el-form-item label="执行主机IP" prop="exec_host">
-              <el-input v-model="addAdHocTask.exec_host"  placeholder="执行主机IP， 多个主机IP以逗号（,）分隔" ></el-input>
+            <el-form-item
+              label="执行主机IP"
+              prop="exec_host">
+              <el-input
+                v-model="addAdHocTask.exec_host"
+                placeholder="执行主机IP， 多个主机IP以逗号（,）分隔" >
+              </el-input>
             </el-form-item>
-            <el-form-item label="执行模块名称" prop="model_name">
-              <el-select v-model="addAdHocTask.model_name" placeholder="请选择模块名称"  style="width: 100%">
-                <el-option v-for="item in moduleNameSelect"
-                           :key="item"
-                           :label="item"
-                           :value="item"
-                           size="medium">
+            <el-form-item
+              label="执行模块名称"
+              prop="model_name">
+              <el-select
+                v-model="addAdHocTask.model_name"
+                placeholder="请选择模块名称"
+                style="width: 100%">
+                <el-option
+                  v-for="item in moduleNameSelect"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                  size="medium">
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="执行模块参数" prop="model_args">
-              <el-input v-model="addAdHocTask.model_args"  placeholder="请输入执行模块参数" ></el-input>
+            <el-form-item
+              label="执行模块参数"
+              prop="model_args">
+              <el-input
+                v-model="addAdHocTask.model_args"
+                placeholder="请输入执行模块参数" >
+              </el-input>
             </el-form-item>
           </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisibleForAddAdhoc = false">取 消</el-button>
-            <el-button type="primary" @click="handleSubmitAddAdHocTask">确 定</el-button>
+          <div
+            slot="footer"
+            class="dialog-footer">
+            <el-button
+              size="small"
+              type="primary"
+              @click="handleSubmitAddAdHocTask">
+              确 定
+            </el-button>
+            <el-button
+              size="small"
+              @click="dialogVisibleForAddAdhoc = false">
+              取 消
+            </el-button>
           </div>
         </el-dialog>
       </el-dialog>
@@ -307,7 +481,6 @@
             this.params.status = ''
           }
           this.params.name = this.searchForms.name
-          console.log('params', this.params)
           this.fetchData()
         } else if (this.activeName === 'Ad-hoc') {
           this.adhocParams.page = 1
@@ -320,7 +493,6 @@
           } else {
             this.adhocParams.status = ''
           }
-          console.log(this.adhocParams)
           this.adhocParams.name = this.searchForms.name
           this.fetchData()
         }
@@ -353,7 +525,6 @@
         })
       },
       handleSubmitAddPlaybookTask() {
-        console.log('addPlaybookTask', this.addPlaybookTask)
         const formData = new FormData()
         formData.append('name', this.addPlaybookTask.name)
         formData.append('playbook', this.addPlaybookTask.playbook)

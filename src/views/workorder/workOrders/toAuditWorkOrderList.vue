@@ -52,7 +52,6 @@
                        width="150px"
                        align="center">
         <template slot-scope="scope">
-          <!--          {{ scope.row.order_env_type }}-->
           <span v-for="item in scope.row.order_env_type">
             <el-tag size="mini"> {{ item.name }}</el-tag>
             <span> </span>

@@ -15,6 +15,11 @@
           <bar-chart></bar-chart>
         </div>
       </el-col>
+      <el-col :xs="24" :sm="24" :lg="8">
+        <div class="chart-wrapper">
+          <raddar-chart />
+        </div>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -25,24 +30,19 @@
   import BarChart from './components/BarChart'
   import PaneGroup from './components/PaneGroup'
   import LineChart from './components/LineChart'
+  import RaddarChart from './components/RaddarChart'
   import { getWorkOrderHistoryCount, getLineChartData } from '@/api/workorder'
 
-  // const lineChartData = {
-  //   newVisitis: {
-  //     expectedData: [100, 120, 161, 134, 105, 160, 165],
-  //     actualData: [120, 82, 91, 154, 162, 140, 145]
-  //   },
-  //   messages: {
-  //     expectedData: [200, 192, 120, 144, 160, 130, 140],
-  //     actualData: [180, 160, 151, 106, 145, 150, 130]
-  //   }
-  // }
   export default {
     name: 'dashboard',
-    components: { BarChart, PieChart, PaneGroup, LineChart },
+    components: {
+      BarChart,
+      PieChart,
+      RaddarChart,
+      PaneGroup,
+      LineChart },
     data() {
       return {
-        // lineChartData: lineChartData.newVisitis,
         currentRole: 'adminDashboard',
         pieData: [],
         lineData: []
@@ -58,7 +58,6 @@
         getWorkOrderHistoryCount().then(
           res => {
             this.pieData = res
-            console.log(this.pieData)
           }
         )
         getLineChartData().then(

@@ -98,27 +98,22 @@
     },
     methods: {
       handleOpenNewPage(row) {
-        console.log(row)
         if (row.system_type === 'Linux') {
           const { href } = this.$router.resolve({
             path: '/resources/webssh'
           })
           const new_href = href + '?' + row.id
-          console.log(new_href)
           window.open(new_href, '_blank', 'width=1500,height=850')
         } else {
           const { href } = this.$router.resolve({
             path: '/webssh/webvnc'
           })
-          console.log('href', href)
           const new_href = href + '?' + row.id
-          console.log('new_href', new_href)
           window.open(new_href, '_blank', 'width=1600,height=768')
         }
       },
       handleAddResourceUser() {
         this.addResourceUserFormVisible = true
-        console.log('add resource user')
       },
       handleRemove(file, fileList) {
         console.log(file, fileList)
@@ -133,7 +128,6 @@
         }
       },
       handlerSubmitAddResourceUser() {
-        console.log(this.addResourceUserForm)
         const formData = new FormData()
         formData.append('user_name', this.addResourceUserForm.user_name)
         formData.append('user_password', this.addResourceUserForm.user_password)
@@ -141,9 +135,7 @@
         formData.append('is_superuser', this.addResourceUserForm.is_superuser)
         formData.append('private_key', this.addResourceUserForm.private_key)
         formData.append('belong_resource', this.resourceId)
-        console.log(formData)
         this.$emit('handleAddResourceUser', formData)
-        console.log('x')
       }
     }
   }

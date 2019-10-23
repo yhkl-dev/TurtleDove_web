@@ -1,5 +1,5 @@
 <template>
-    <div class="app-container">
+    <div>
       <div class="filter-container" >
         <el-form :inline="true"
                  :model="addParameterForm">
@@ -16,9 +16,10 @@
                        size="mini"
                        icon="el-icon-minus"
                        @click="addFormVisible = false"
-                       circle></el-button>
+                       circle>
+            </el-button>
           </el-form-item>
-          <el-form-item  v-if="addFormVisible" label="key">
+          <el-form-item v-if="addFormVisible" label="key">
             <el-input width="80%"
                       v-model="addParameterForm.item_name"
                       placeholder="key"
@@ -33,7 +34,11 @@
                       size="mini"></el-input>
           </el-form-item>
           <el-form-item v-if="addFormVisible">
-            <el-button size="mini" type="text" @click="handleCommitAddParameter">Save</el-button>
+            <el-button size="mini"
+                       type="text"
+                       @click="handleCommitAddParameter">
+              Save
+            </el-button>
           </el-form-item>
         </el-form>
       </div>

@@ -14,14 +14,6 @@
                         label="管理IP"
                         align="center">
       </el-table-column>
-<!--      <el-table-column  prop="status"-->
-<!--                        label="状态"-->
-<!--                        align="center">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column  prop="last_check"-->
-<!--                        label="LAST CHECK"-->
-<!--                        align="center">-->
-<!--      </el-table-column>-->
     </el-table>
     <div class="text-center" v-show="serverListTotalNum>=10">
       <el-pagination background

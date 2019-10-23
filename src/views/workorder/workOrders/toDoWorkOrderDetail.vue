@@ -10,6 +10,7 @@
               <tr><td>项目名称</td></tr>
               <tr><td>当前审核人</td></tr>
               <tr><td>当前执行人</td></tr>
+              <tr v-for="item in workOrderDetail.extra_fields"><td>{{ item.value_name }}</td></tr>
               <tr><td>附件</td></tr>
             </table>
           </el-col>
@@ -17,15 +18,22 @@
             <table>
               <tr><td>{{ workOrderDetail.order_title }}</td></tr>
               <tr><td>{{ workOrderDetail.status_name }}</td></tr>
-
               <tr><td>{{ workOrderDetail.order_project_name }}</td></tr>
-
               <tr><td>{{ workOrderDetail.current_audit_user || '暂无' }}</td></tr>
               <tr><td>{{ workOrderDetail.current_exec_user || '暂无' }}</td></tr>
+              <tr v-for="item in workOrderDetail.extra_fields"><td>{{ item.value || '暂无' }}</td></tr>
               <tr><td>
-                <el-button v-if="workOrderDetail.download_url !== null" size="mini" type="text" @click="downloadAttachment(workOrderDetail.download_url)">
-                  下载
-                </el-button>
+                <div v-if="workOrderDetail.download_url !== null">
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click="downloadAttachment(workOrderDetail.download_url)">
+                    下载
+                  </el-button>
+                </div>
+                <div v-else>
+                  暂无
+                </div>
               </td></tr>
             </table>
           </el-col>

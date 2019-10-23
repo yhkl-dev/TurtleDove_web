@@ -1,112 +1,297 @@
 <template>
-    <div class="app-container" >
-      <div class="filter-container">
-        <el-input size='small' placeholder="搜索" v-model="search_user_key" style="width: 30%" @keyup.enter.native="searchClick">
-          <el-button slot="append" icon="el-icon-search" @click="searchClick"></el-button>
-        </el-input>
-        <el-button type="primary" size="small" @click="addClick">添加用户</el-button>
-      </div>
-      <el-table v-loading="loading"
-              element-loading-text="拼命加载中"
-              :data="userList" style="width: 100%; margin-top: 10px ">
-          <el-table-column prop="username" label="用户名" align="center"></el-table-column>
-          <el-table-column prop="name" label="姓名"  align="center"></el-table-column>
-          <el-table-column prop="phone" label="手机号" align="center"></el-table-column>
-          <el-table-column prop="email" label="Email" align="center"></el-table-column>
-          <el-table-column prop="is_active" label="登录状态" align="center">
-            <template slot-scope="scope">
-                  <el-switch active-color="#13ce66"
-                             inactive-color="#ff4949" v-model="scope.row.is_active" @change="statusChange(scope.row)"></el-switch>
-              </template>
-          </el-table-column>
-          <el-table-column prop="last_login" label="上次登陆时间" align="center"> </el-table-column>
-          <el-table-column prop=""  label="操作"  width="400" align="center">
-              <template slot-scope="scope">
-                <el-button type="primary" size="mini"  @click="checkRoleClick(scope.row)">查看角色</el-button>
-                <el-button type="primary" size="mini"  @click="chooceRoleClick(scope.row)">指定角色</el-button>
-                <el-button type="warning" size="mini"  @click="changeMobileClick(scope.row)">修改</el-button>
-                <el-button type="danger" size="mini"   @click="deleteClick(scope.row)">删除</el-button>
-              </template>
-          </el-table-column>
-      </el-table>
-      <div class="text-center" v-show="total_num>=10">
-          <el-pagination
-                  background
-                  @current-change="paginationChange"
-                  layout="total, prev, pager, next, jumper"
-                  :current-page.sync="page"
-                  :total="total_num">
-          </el-pagination>
-      </div>
-      <el-dialog title="增加用户" :visible.sync="addUserFormVisible" width="500px">
-          <el-form ref="addUserForm" :model="addUserForm" label-width="70px" :rules="addUserRule">
-              <el-form-item label="登陆名" prop="username">
-                  <el-input v-model="addUserForm.username" placeholder="请输入登陆名"></el-input>
-              </el-form-item>
-              <el-form-item label="姓名" prop="name">
-                  <el-input v-model="addUserForm.name" placeholder="请输入姓名"></el-input>
-              </el-form-item>
-              <el-form-item label="密码" prop="password">
-                  <el-input v-model="addUserForm.password" type="password" placeholder="请输入密码"></el-input>
-              </el-form-item>
-              <el-form-item label="手机号" prop="phone">
-                  <el-input v-model="addUserForm.phone" placeholder="请输入手机号"></el-input>
-              </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-              <el-button size="small" @click="addUserFormVisible = false">取 消</el-button>
-              <el-button size="small" type="primary" @click="submitAddClick">确 定</el-button>
-          </div>
-      </el-dialog>
-      <el-dialog title="查看角色" :visible.sync="checkRoleVisible">
-          <div class="text-center">
-            <el-tag type="info" v-for="(item, index) in roleTags" :key="index" style="margin:0 10px;">{{ item.name }}</el-tag>
-          </div>
-          <div slot="footer" class="dialog-footer">
-              <el-button @click="checkRoleVisible = false">取 消</el-button>
-              <el-button type="primary" @click="checkRoleVisible = false">确 定</el-button>
-          </div>
-      </el-dialog>
-      <el-dialog title="指定角色" :visible.sync="chooseRoleVisible">
-          <el-form :model="chooseRole" label-width="70px">
-              <el-form-item label="用户名">
-                  <el-input v-model="chooseRole.username" disabled></el-input>
-              </el-form-item>
-              <el-form-item label="角色">
-                  <el-select v-model="roles" multiple placeholder="请选择角色" style="width:100%">
-                    <el-option
-                      v-for="(item, index) in rolesList"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.id">
-                    </el-option>
-                  </el-select>
-              </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-              <el-button @click="chooseRoleVisible = false">取 消</el-button>
-              <el-button type="primary" @click="submitChooseRoleClick">确 定</el-button>
-          </div>
-      </el-dialog>
-      <el-dialog title="修改手机号" :visible.sync="changeMobileFormVisible">
-          <el-form ref="changeMobileForm" :model="changeMobileForm" label-width="70px" :rules="addUserRule">
-              <el-form-item label="登陆名">
-                  <el-input v-model="changeMobileForm.username" placeholder="请输入登陆名" disabled></el-input>
-              </el-form-item>
-              <el-form-item label="手机号" prop="phone">
-                  <el-input v-model="changeMobileForm.phone" placeholder="请输入手机号"></el-input>
-              </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-              <el-button @click="changeMobileFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="submitChangeMobileClick">确 定</el-button>
-          </div>
-      </el-dialog>
+  <div class="app-container" >
+    <div class="filter-container">
+      <el-row :gutter="24">
+        <el-col :span="6">
+          <el-input
+            size='small'
+            placeholder="搜索"
+            v-model="search_user_key"
+            @keyup.enter.native="searchClick">
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click="searchClick">
+            </el-button>
+          </el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-button
+            type="primary"
+            size="small"
+            @click="addClick">
+            添加用户
+          </el-button>
+        </el-col>
+      </el-row>
     </div>
+    <el-table
+      v-loading="loading"
+      stripe
+      element-loading-text="拼命加载中"
+      :data="userList">
+      <el-table-column
+        prop="username"
+        label="用户名"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="姓名"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        prop="phone"
+        label="手机号"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        prop="email"
+        label="Email"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        prop="is_active"
+        label="登录状态"
+        align="center">
+        <template
+          slot-scope="scope">
+          <el-switch
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            v-model="scope.row.is_active"
+            @change="statusChange(scope.row)">
+          </el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="last_login"
+        label="上次登陆时间"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        prop=""
+        label="操作"
+        width="400"
+        align="center">
+        <template
+          slot-scope="scope">
+          <el-button
+            type="text"
+            size="mini"
+            @click="checkRoleClick(scope.row)">
+            查看角色
+          </el-button>
+          <el-button
+            type="text"
+            size="mini"
+            @click="chooceRoleClick(scope.row)">
+            指定角色
+          </el-button>
+          <el-button
+            type="text"
+            size="mini"
+            @click="changeMobileClick(scope.row)">
+            修改
+          </el-button>
+          <el-button
+            type="text"
+            size="mini"
+            @click="deleteClick(scope.row)">
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div
+      class="pagination-container"
+      v-show="total_num>=10">
+      <el-pagination
+        @current-change="paginationChange"
+        layout="total, prev, pager, next, jumper"
+        :current-page.sync="page"
+        :total="total_num">
+      </el-pagination>
+    </div>
+    <el-dialog
+      title="添加用户"
+      :visible.sync="addUserFormVisible"
+      center
+      width="30%">
+      <el-form
+        ref="addUserForm"
+        :model="addUserForm"
+        label-width="70px"
+        :rules="addUserRule">
+        <el-form-item
+          label="登陆名"
+          prop="username">
+          <el-input
+            v-model="addUserForm.username"
+            placeholder="请输入登陆名">
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="姓名"
+          prop="name">
+          <el-input
+            v-model="addUserForm.name"
+            placeholder="请输入姓名">
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="密码"
+          prop="password">
+          <el-input
+            v-model="addUserForm.password"
+            type="password"
+            placeholder="请输入密码">
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="手机号"
+          prop="phone">
+          <el-input
+            v-model="addUserForm.phone"
+            placeholder="请输入手机号">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer">
+        <el-button
+          size="small"
+          type="primary"
+          @click="submitAddClick">
+          确 定
+        </el-button>
+        <el-button
+          size="small"
+          @click="addUserFormVisible = false">
+          取 消
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      title="查看角色"
+      :visible.sync="checkRoleVisible"
+      center
+      width="30%">
+      <div class="text-center">
+        <el-tag
+          type="info"
+          v-for="(item, index) in roleTags"
+          :key="index"
+          style="margin:0 10px;">
+          {{ item.name }}
+        </el-tag>
+      </div>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button
+          type="primary"
+          size="small"
+          @click="checkRoleVisible = false">
+          确 定
+        </el-button>
+        <el-button
+          size="small"
+          @click="checkRoleVisible = false">
+          取 消
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      title="指定角色"
+      width="30%"
+      center
+      :visible.sync="chooseRoleVisible">
+      <el-form
+        :model="chooseRole"
+        label-width="70px">
+        <el-form-item label="用户名">
+          <el-input v-model="chooseRole.username"
+                    disabled>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-select
+            v-model="roles"
+            multiple
+            placeholder="请选择角色"
+            style="width:100%">
+            <el-option
+              v-for="(item, index) in rolesList"
+              :key="index"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+       </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer">
+        <el-button
+          size="small"
+          type="primary"
+          @click="submitChooseRoleClick">
+          确 定
+        </el-button>
+        <el-button
+          size="small"
+          @click="chooseRoleVisible = false">
+          取 消
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      title="修改手机号"
+      width="30%"
+      center
+      :visible.sync="changeMobileFormVisible">
+      <el-form
+        ref="changeMobileForm"
+        :model="changeMobileForm"
+        label-width="70px"
+        :rules="addUserRule">
+        <el-form-item label="登陆名">
+          <el-input
+            v-model="changeMobileForm.username"
+            placeholder="请输入登陆名"
+            disabled>
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="手机号"
+          prop="phone">
+          <el-input
+            v-model="changeMobileForm.phone"
+            placeholder="请输入手机号">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button
+          size="small"
+          type="primary"
+          @click="submitChangeMobileClick">
+          确 定
+        </el-button>
+        <el-button
+          size="small"
+          @click="changeMobileFormVisible = false">
+          取 消
+        </el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-import { getUserList, deleteUser, addUser, updateUser, getGroupsList, getUserGroupsList, updateUserGroupsList } from '@/api/users'
+import { getUserList, deleteUser, addUser, getGroupsList, getUserGroupsList, updateUserGroupsList, updateUserStatus } from '@/api/users'
 
 export default {
   data() {
@@ -231,7 +416,8 @@ export default {
       })
     },
     statusChange(row) {
-      updateUser(row.id, { is_active: row.is_active }).then(() => {
+      const is_active = !row.is_active
+      updateUserStatus(row.id, { is_active: !is_active }).then(() => {
         this.fetchData()
         this.$message({
           message: '操作成功',
@@ -272,7 +458,7 @@ export default {
         if (!valid) {
           return
         }
-        updateUser(this.changeMobileForm.id, { phone: this.changeMobileForm.phone }).then(() => {
+        updateUserStatus(this.changeMobileForm.id, { phone: this.changeMobileForm.phone }).then(() => {
           this.changeMobileFormVisible = false
           this.fetchData()
           this.$message({
@@ -317,5 +503,14 @@ export default {
 
   .box-card {
     width: 480px;
+  }
+  .el-dropdown {
+    vertical-align: top;
+  }
+  .el-dropdown + .el-dropdown {
+    margin-left: 15px;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
   }
 </style>

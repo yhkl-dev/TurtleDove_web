@@ -57,9 +57,24 @@ export function getTemplateWorkOrderModelList(params) {
   })
 }
 
+export function getTemplateWorkOrderModelById(id) {
+  return request({
+    url: '/templateWorkOrderModel/' + id + '/',
+    method: 'get'
+  })
+}
+
 export function addTemplateWorkOrderModelList(data) {
   return request({
     url: '/templateWorkOrderModel/',
+    method: 'post',
+    data
+  })
+}
+
+export function addTemplateWorkOrderModelItem(data) {
+  return request({
+    url: '/templateWorkOrderModelItem/',
     method: 'post',
     data
   })

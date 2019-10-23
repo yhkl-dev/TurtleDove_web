@@ -450,7 +450,6 @@ export default {
       this.resourceTypeListVisible = true
     },
     handleAddResourceUser(formData) {
-      console.log('add resource user')
       addResourceUser(formData).then(res => {
         this.$message({
           message: '创建成功',

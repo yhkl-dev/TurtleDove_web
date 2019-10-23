@@ -48,6 +48,9 @@ const workOrderChart = () => import('@/views/workorder/workOrderChart')
 /* 项目管理*/
 const ProjectList = () => import('@/views/project/ProjectList')
 
+/* 个人中心 */
+const Profile = () => import('@/views/profile')
+
 export const constantRouterMap = [
   {
     path: '/login',
@@ -69,6 +72,20 @@ export const constantRouterMap = [
       name: '首页',
       meta: { title: '首页', icon: 'dashboard', noCache: true }
     }]
+  },
+  {
+    path: '/profile',
+    component: Layout,
+    redirect: '/profile/index',
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: Profile,
+        name: '个人中心',
+        meta: { title: '个人中心', icon: 'user', noCache: true }
+      }
+    ]
   },
   {
     path: '/users',

@@ -33,11 +33,8 @@
     },
     methods: {
       handleCreateTask(formData) {
-        console.log('addTask', this.TaskData)
-        // this.submitUpload()
         const newFormData = new FormData()
         newFormData.append('name', this.TaskData.name)
-        // formData.append('status', this.addTask.status)
         const yml = this.TaskData.playbook
         const blob = new Blob([yml])
         newFormData.append('playbook', blob, this.TaskData.playbook_name)

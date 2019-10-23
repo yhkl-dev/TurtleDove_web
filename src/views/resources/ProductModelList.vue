@@ -131,7 +131,6 @@ export default {
   methods: {
     fetchData() {
       this.loading = true
-      console.log(this.search_key)
       getProductModelList({ page: this.page, model_name: this.search_key }).then(res => {
         this.manufacturerList = res.results
         this.total_num = res.count

@@ -180,15 +180,9 @@
                     placeholder="请输入工单标题">
           </el-input>
         </el-form-item>
-        <el-form-item label="工单需求"  prop="order_purpose">
-          <el-input v-model="addWorkOrderTaskForm.order_purpose"
-                    type="textarea"
-                    :rows="8"
-                    placeholder="请输入工单需求">
-          </el-input>
-        </el-form-item>
         <el-form-item label='工单类型' prop="template_order_model">
           <el-select v-model="addWorkOrderTaskForm.template_order_model"
+                     @change="handleShowItems()"
                      style="width: 100%" placeholder="请选择工单类型">
             <el-option v-for="(item, index) in workOrderModelList"
                        :key="index"
@@ -196,6 +190,18 @@
                        :value="item.id">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item v-for="(item, index) in extraFields"
+                      :key="index"
+                      :label="item.value_name">
+          <el-input v-model="item.value" placeholder="请输入"></el-input>
+        </el-form-item>
+        <el-form-item label="工单需求"  prop="order_purpose">
+          <el-input v-model="addWorkOrderTaskForm.order_purpose"
+                    type="textarea"
+                    :rows="8"
+                    placeholder="请输入工单需求">
+          </el-input>
         </el-form-item>
         <el-form-item label="平台环境类型" prop="order_env_type">
           <el-select v-model="addWorkOrderTaskForm.order_env_type"
@@ -268,13 +274,6 @@
                     placeholder="请输入工单标题">
           </el-input>
         </el-form-item>
-        <el-form-item label="工单需求">
-          <el-input v-model="editWorkOrderTaskForm.order_purpose"
-                    type="textarea"
-                    :rows="8"
-                    placeholder="请输入工单需求">
-          </el-input>
-        </el-form-item>
         <el-form-item label='工单类型'>
           <el-select v-model="editWorkOrderTaskForm.template_order_model"
                      style="width: 100%" placeholder="请选择工单类型">
@@ -284,6 +283,18 @@
                        :value="item.id">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item v-for="(item, index) in extraFields"
+                      :key="index"
+                      :label="item.value_name">
+          <el-input v-model="item.value" placeholder="请输入"></el-input>
+        </el-form-item>
+        <el-form-item label="工单需求">
+          <el-input v-model="editWorkOrderTaskForm.order_purpose"
+                    type="textarea"
+                    :rows="8"
+                    placeholder="请输入工单需求">
+          </el-input>
         </el-form-item>
         <el-form-item label="平台环境类型" prop="order_env_type">
           <el-select v-model="editWorkOrderTaskForm.order_env_type"
@@ -347,7 +358,7 @@
 </template>
 
 <script>
-  import { addWorkOrderOperation, updateWorkOrderTask } from '@/api/workorder'
+  import { addWorkOrderOperation, updateWorkOrderTask, getTemplateWorkOrderModelById } from '@/api/workorder'
   import workOrderDetail from './workOrderDetail'
 
   export default {
@@ -366,6 +377,8 @@
         ],
         workOrderDetail: {},
         fileList: [],
+        extraFields: [],
+        extraFieldValues: [],
         addWorkOrderTaskForm: {
           order_title: '',
           order_purpose: '',
@@ -373,6 +386,7 @@
           order_env_type: [],
           order_products: '',
           order_project: '',
+          extra_fields: [],
           order_status: 1,
           template_order_model: ''
         },
@@ -386,7 +400,8 @@
           order_products: '',
           order_project: '',
           order_status: 1,
-          template_order_model: ''
+          template_order_model: '',
+          extra_fields: []
         },
         searchForm: {
           order_task_id: '',
@@ -454,6 +469,19 @@
       }
     },
     methods: {
+      handleShowItems() {
+        getTemplateWorkOrderModelById(this.addWorkOrderTaskForm.template_order_model).then(
+          res => {
+            this.extraFields = []
+            res.extra_fields.forEach(item => {
+              const item_value = {
+                value_name: item.value_name,
+                value: ''
+              }
+              this.extraFields.push(item_value)
+            })
+          })
+      },
       handleRemove(file, fileList) {
         console.log(file, fileList)
       },
@@ -504,14 +532,15 @@
         this.workOrderTaskVisible = true
         if (this.$refs['addWorkOrderTaskForm'] !== undefined) {
           this.$refs['addWorkOrderTaskForm'].resetFields()
+          this.extraFields = []
         }
       },
       handleCommitAddWorkOrderTask: function() {
         this.$refs['addWorkOrderTaskForm'].validate((valid) => {
           if (valid) {
-            console.log('addWorkOrderTaskForm', this.addWorkOrderTaskForm)
             const formData = new FormData()
             formData.append('order_title', this.addWorkOrderTaskForm.order_title)
+            formData.append('extra_fields', JSON.stringify(this.extraFields))
             formData.append('order_purpose', this.addWorkOrderTaskForm.order_purpose)
             formData.append('order_env_type', this.addWorkOrderTaskForm.order_env_type.toString())
             formData.append('order_products', this.addWorkOrderTaskForm.order_products)
@@ -519,27 +548,13 @@
             formData.append('order_status', this.addWorkOrderTaskForm.order_status)
             formData.append('template_order_model', this.addWorkOrderTaskForm.template_order_model)
             formData.append('order_files', this.addWorkOrderTaskForm.order_files)
-            console.log(formData)
             this.$emit('handleCommitAddWorkOrderTask', formData)
             this.workOrderTaskVisible = false
           }
         })
-        // console.log('addWorkOrderTaskForm', this.addWorkOrderTaskForm)
-        // const formData = new FormData()
-        // formData.append('order_title', this.addWorkOrderTaskForm.order_title)
-        // formData.append('order_purpose', this.addWorkOrderTaskForm.order_purpose)
-        // formData.append('order_env_type', this.addWorkOrderTaskForm.order_env_type.toString())
-        // formData.append('order_products', this.addWorkOrderTaskForm.order_products)
-        // formData.append('order_project', this.addWorkOrderTaskForm.order_project)
-        // formData.append('order_status', this.addWorkOrderTaskForm.order_status)
-        // formData.append('template_order_model', this.addWorkOrderTaskForm.template_order_model)
-        // formData.append('order_files', this.addWorkOrderTaskForm.order_files)
-        // console.log(formData)
-        // this.$emit('handleCommitAddWorkOrderTask', formData)
-        // this.workOrderTaskVisible = false
       },
       replyWorkOrderTaskForm(data) {
-        addWorkOrderOperation(data).then(res => {
+        addWorkOrderOperation(data).then(() => {
           this.$message({
             message: '操作成功',
             type: 'success'
@@ -549,7 +564,7 @@
         })
       },
       handleWorkOrderOperation(data) {
-        addWorkOrderOperation(data).then(res => {
+        addWorkOrderOperation(data).then(() => {
           this.$message({
             message: '操作成功',
             type: 'success'
@@ -583,13 +598,32 @@
         })
       },
       editWorkOrderTaskDetail(row) {
-        // console.log(this.updateWorkOrderTaskVisible)
-        console.log(row)
         this.updateWorkOrderTaskVisible = true
-        console.log('env type', row.order_env_type)
-        console.log('edit order type', typeof row.order_files)
-        const { id, order_title, order_task_id, status_code, order_purpose, order_products, order_env_type, order_project, order_files, template_order_model } = row
-        this.editWorkOrderTaskForm = { id, order_title, order_task_id: order_task_id, order_status: status_code, order_purpose, order_products, order_env_type, order_project, order_files, template_order_model }
+        const { id, order_title, order_task_id, status_code, order_purpose, order_products, order_env_type, order_project, order_files, template_order_model, extra_fields } = row
+        this.editWorkOrderTaskForm = { id, order_title, order_task_id: order_task_id, order_status: status_code, order_purpose, order_products, order_env_type, order_project, order_files, template_order_model, extra_fields }
+        this.extraFields = []
+        getTemplateWorkOrderModelById(this.editWorkOrderTaskForm.template_order_model).then(
+          res => {
+            res.extra_fields.forEach(item => {
+              if (this.editWorkOrderTaskForm.extra_fields.length !== 0) {
+                this.editWorkOrderTaskForm.extra_fields.forEach(field => {
+                  if (field.value_name === item.value_name) {
+                    const item_value = {
+                      value_name: item.value_name,
+                      value: field.value
+                    }
+                    this.extraFields.push(item_value)
+                  }
+                })
+              } else {
+                const item_value = {
+                  value_name: item.value_name,
+                  value: ''
+                }
+                this.extraFields.push(item_value)
+              }
+            })
+          })
         this.oldValue = row.order_files
       },
       handleCommitUpdateWorkOrderTask: function() {
@@ -599,8 +633,8 @@
           this.editWorkOrderTaskForm.order_env_type.forEach(item => {
             env_type.push(item.name)
           })
-          console.log('in else', env_type)
           this.editWorkOrderTaskForm.order_env_type = env_type.toString()
+          this.editWorkOrderTaskForm.extra_fields = JSON.stringify(this.extraFields)
           updateWorkOrderTask(this.editWorkOrderTaskForm.id, this.editWorkOrderTaskForm).then(() => {
             this.updateWorkOrderTaskVisible = false
             this.$message({
@@ -610,7 +644,6 @@
             this.$emit('refresh')
           })
         } else {
-          console.log('editWorkOrderTaskForm status', this.editWorkOrderTaskForm)
           const formData = new FormData()
           formData.append('order_title', this.editWorkOrderTaskForm.order_title)
           formData.append('order_task_id', this.editWorkOrderTaskForm.order_task_id)
@@ -619,7 +652,6 @@
           this.editWorkOrderTaskForm.order_env_type.forEach(item => {
             env_type.push(item.name)
           })
-          console.log('in else', env_type)
           this.editWorkOrderTaskForm.order_env_type = env_type.toString()
           formData.append('order_env_type', this.editWorkOrderTaskForm.order_env_type)
           formData.append('order_products', this.editWorkOrderTaskForm.order_products)
@@ -627,7 +659,6 @@
           formData.append('order_status', this.editWorkOrderTaskForm.order_status)
           formData.append('template_order_model', this.editWorkOrderTaskForm.template_order_model)
           formData.append('order_files', this.editWorkOrderTaskForm.order_files)
-          console.log('ordef_file type', typeof this.editWorkOrderTaskForm.order_files)
           updateWorkOrderTask(this.editWorkOrderTaskForm.id, formData).then(() => {
             this.updateWorkOrderTaskVisible = false
             this.$message({

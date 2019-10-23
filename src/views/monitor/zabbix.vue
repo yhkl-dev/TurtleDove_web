@@ -1,5 +1,5 @@
 <template>
-    <div class="zabbix-container">
+    <div class="app-container">
       <el-row>
         <el-col style="width:25%;text-align:center;padding:10px;">
           <el-progress type="circle" :percentage=monitor_host_percent :stroke-width=15 ></el-progress>
@@ -24,10 +24,12 @@
           v-loading="loading"
           element-loading-text="拼命加载中"
           :data="zabbixProductData"
+          stripe
           border>
           <el-table-column
             prop="name"
-            label="业务线"
+            label="产品线"
+            width="300px"
             align="center">
           </el-table-column>
           <el-table-column

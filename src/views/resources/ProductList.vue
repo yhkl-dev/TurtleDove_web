@@ -268,7 +268,6 @@ export default {
       })
     },
     treeNodeClick(data) {
-      console.log('tree, data', data)
       this.$refs['productForm'].resetFields()
       getProductLevelInfo(data.id).then(res => {
         const op_interface = []

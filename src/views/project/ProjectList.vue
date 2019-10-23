@@ -1,21 +1,37 @@
 <template>
     <div class="app-container">
       <el-row :gutter="24">
-        <el-col :span="7">
+        <el-col :span="7" :xs="24">
           <el-card>
-            <div slot="header">
+            <div
+              slot="header"
+              class="clearfix">
               <span>项目列表</span>
-              <el-button style="float: right; padding: 3px 0"
-                         type="text"
-                         @click="handleAddProject"
-                         icon="el-icon-plus" circle></el-button>
+              <el-button
+                style="float: right; padding: 3px 0"
+                type="text"
+                @click="handleAddProject"
+                icon="el-icon-plus"
+                circle>
+              </el-button>
             </div>
             <el-table :data="projectList" v-loading="loading" :show-header="false" @row-click="handleClick">
-              <el-table-column prop="project_name" label="项目名称" align="center" width="300px"></el-table-column>
+              <el-table-column prop="project_name"
+                               label="项目名称"
+                               align="center"
+                               width="300px"></el-table-column>
               <el-table-column label="" align="right">
                 <template slot-scope="scope">
-                  <el-button size="small" type="text" @click="handleUpdateProject(scope.row)">edit</el-button>
-                  <el-button size="small" type="text" @click="handleDeleteProject(scope.row)">delete</el-button>
+                  <el-button size="small"
+                             type="text"
+                             @click="handleUpdateProject(scope.row)">
+                    edit
+                  </el-button>
+                  <el-button size="small"
+                             type="text"
+                             @click="handleDeleteProject(scope.row)">
+                    delete
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -32,35 +48,68 @@
             </div>
           </el-card>
         </el-col>
-        <el-col :span="17">
+        <el-col :span="17" :xs="24">
           <el-card>
-            <div slot="header">
-              <h4>{{ this.projectName }} 参数</h4>
-            </div>
-            <project-configure v-bind:project-configure-parameter="projectConfigureParameter"
-                               @refresh="refresh"
-                               v-bind:projectId="projectId">
-            </project-configure>
+            <el-tabs v-model="activeTab">
+              <el-tab-pane label="参数配置" name="Parameter">
+                <span>
+                  <h4>{{ this.projectName }}</h4>
+                </span>
+                <project-configure
+                  v-bind:project-configure-parameter="projectConfigureParameter"
+                  @refresh="refresh"
+                  v-bind:projectId="projectId">
+                </project-configure>
+              </el-tab-pane>
+              <el-tab-pane label="部署信息" name="timeline">
+                <div>hello world</div>
+              </el-tab-pane>
+              <el-tab-pane label="项目统计" name="account">
+                <div>hello world</div>
+              </el-tab-pane>
+            </el-tabs>
           </el-card>
         </el-col>
       </el-row>
-      <el-dialog title="新建项目"
-                 :visible.sync="addProjectVisible"
-                 width="45%">
-        <el-form :inline="true"
-                 :rules="rules"
-                 :model="addProjectForm" >
-          <el-form-item label="项目名称（中文)" prop="project_name_zh">
-            <el-input  size="mini" v-model="addProjectForm.project_name_zh" placeholder="项目名称（中文)"></el-input>
-          </el-form-item>
 
-          <el-form-item label="项目名称（英文)" prop="project_name_en">
-            <el-input size="mini" v-model="addProjectForm.project_name_en" placeholder="项目名称（英文)"></el-input>
-          </el-form-item>
 
+      <el-dialog
+        title="新建项目"
+        :visible.sync="addProjectVisible"
+        width="45%">
+        <el-form
+          :inline="true"
+          :rules="rules"
+          :model="addProjectForm" >
+          <el-form-item
+            label="项目名称（中文)"
+            prop="project_name_zh">
+            <el-input
+              size="mini"
+              v-model="addProjectForm.project_name_zh"
+              placeholder="项目名称（中文)">
+            </el-input>
+          </el-form-item>
+          <el-form-item
+            label="项目名称（英文)"
+            prop="project_name_en">
+            <el-input
+              size="mini"
+              v-model="addProjectForm.project_name_en"
+              placeholder="项目名称（英文)"></el-input>
+          </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="mini" @click="handleCommitAddProject">确定</el-button>
-            <el-button size="mini" @click="addProjectVisible = false">取消</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleCommitAddProject">
+              确定
+            </el-button>
+            <el-button
+              size="mini"
+              @click="addProjectVisible = false">
+              取消
+            </el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -71,17 +120,36 @@
         <el-form :inline="true"
                  :rules="rules"
                  :model="updateProjectForm" >
-          <el-form-item label="项目名称（中文)" prop="project_name_zh">
-            <el-input  size="mini" v-model="updateProjectForm.project_name_zh" placeholder="项目名称（中文)"></el-input>
+          <el-form-item
+            label="项目名称（中文)"
+            prop="project_name_zh">
+            <el-input
+              size="mini"
+              v-model="updateProjectForm.project_name_zh"
+              placeholder="项目名称（中文)">
+            </el-input>
           </el-form-item>
-
-          <el-form-item label="项目名称（英文)" prop="project_name_en">
-            <el-input size="mini" v-model="updateProjectForm.project_name_en" placeholder="项目名称（英文)"></el-input>
+          <el-form-item
+            label="项目名称（英文)"
+            prop="project_name_en">
+            <el-input
+              size="mini"
+              v-model="updateProjectForm.project_name_en"
+              placeholder="项目名称（英文)">
+            </el-input>
           </el-form-item>
-
           <el-form-item>
-            <el-button type="primary" size="mini" @click="handleCommitUpdateProject">确定</el-button>
-            <el-button size="mini" @click="updateProjectVisible = false">取消</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleCommitUpdateProject">
+              确定
+            </el-button>
+            <el-button
+              size="mini"
+              @click="updateProjectVisible = false">
+              取消
+            </el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -100,6 +168,7 @@
         loading: false,
         addProjectVisible: false,
         updateProjectVisible: false,
+        activeTab: 'Parameter',
         projectList: [],
         projectConfigureParameter: [],
         searchForm: {

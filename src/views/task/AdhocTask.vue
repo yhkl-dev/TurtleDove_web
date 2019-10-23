@@ -145,7 +145,6 @@
       },
       handleDeleteClick(row) {
         this.deleteTask(row)
-        console.log(this.deleteTaskStatus)
         this.$emit('handleDeleteAdhocClick', this.deleteTaskStatus)
       },
       handleDrag(row) {

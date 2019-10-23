@@ -176,7 +176,6 @@
         } else if (this.params.status === '已执行') {
           this.params.status = 'Y'
         }
-        console.log(this.params)
         this.fetchData()
       },
       handleCancelAdd() {
@@ -190,7 +189,6 @@
         this.$refs.upload.submit()
       },
       handleSubmitAdd() {
-        console.log('addTask', this.addTask)
         // this.submitUpload()
         const formData = new FormData()
         formData.append('name', this.addTask.name)

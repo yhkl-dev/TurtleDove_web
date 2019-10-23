@@ -82,7 +82,6 @@ export default {
           this.hostinfo.passwd = res.user_password
           this.hostinfo.private_key = res.private_key
         },
-        console.log(this.hostinfo)
       )
     },
     connect() {

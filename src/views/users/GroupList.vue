@@ -1,245 +1,230 @@
 <template>
-    <div class="app-container" >
-      <div class="filter-container">
-        <el-input size='small' placeholder="搜索" v-model="search_role"  style="width: 30%;" @keyup.enter.native="searchClick">
-          <el-button slot="append" icon="el-icon-search" @click="searchClick"></el-button>
-        </el-input>
-        <el-button size='small' type="primary"  @click="addRoleClick">添加角色</el-button>
+  <div class="app-container" >
+    <div class="filter-container">
+      <el-row :gutter="24">
+        <el-col :span="6">
+          <el-input
+            size='small'
+            placeholder="搜索"
+            v-model="search_role"
+            @keyup.enter.native="searchClick">
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click="searchClick">
+            </el-button>
+          </el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-button
+            size='small'
+            type="primary"
+            @click="addRoleClick">
+            添加角色
+          </el-button>
+        </el-col>
+      </el-row>
+    </div>
+    <el-table
+      v-loading="loading"
+      element-loading-text="拼命加载中"
+      :data="groupList">
+      <el-table-column
+        prop="name"
+        label="角色名"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        label="成员管理"
+        align="center">
+        <template
+          slot-scope="scope">
+          <el-button
+            @click.native.prevent="groupMemberClick(scope.row.id)"
+            type="text"
+            size="small">
+            {{'成员列表（' + scope.row.member+ '）人'}}
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+              prop=""
+              label="api接口权限"
+              align="center">
+        <template slot-scope="scope">
+          <el-button
+            type="text"
+            size="small"
+            @click="checkPermissionClick(scope.row.id)">
+            查看
+          </el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="changePermissionClick(scope.row)">
+            修改
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+              prop=""
+              label="前端权限"
+              align="center">
+        <template slot-scope="scope">
+            <el-button
+              type="text"
+              size="small"
+              @click="showGroupMenus(scope.row.id)">
+              查看</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="changeGroupMenus(scope.row.id)">
+              修改</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+              prop=""
+              label="操作"
+              align="center">
+        <template slot-scope="scope">
+          <el-button
+            type="text"
+            size="small"
+            @click="deleteGroupClick(scope.row)">
+            删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="pagination-container"
+         v-show="total_num>=10">
+      <el-pagination
+        @current-change="paginationChange"
+        layout="total, prev, pager, next, jumper"
+        :current-page.sync="page"
+        :total="total_num">
+      </el-pagination>
+    </div>
+    <el-dialog
+      title="添加角色"
+      center
+      width="30%"
+      :visible.sync="addRoleVisible">
+      <el-form
+        ref="addRoleForm"
+        :model="addRoleForm"
+        label-width="70px"
+        :rules="addRoleRule">
+        <el-form-item
+          label="角色名"
+          prop="name">
+          <el-input
+            size="small"
+            v-model="addRoleForm.name"
+            placeholder="请输入角色名">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer">
+        <el-button
+          size="small"
+          type="primary"
+          @click="submitAddRoleClick">
+          确 定</el-button>
+        <el-button
+          size="small"
+          @click="addRoleVisible = false">
+          取 消</el-button>
       </div>
-      <el-table
-              v-loading="loading"
-              element-loading-text="拼命加载中"
-              :data="groupList"
-              style="width: 100%; margin-top: 10px ">
-          <el-table-column
-                  prop="name"
-                  label="角色名"
-                  align="center">
-          </el-table-column>
-          <el-table-column
-                  label="成员管理"
-                  align="center">
-              <template slot-scope="scope">
-                  <el-button
-                          @click.native.prevent="groupMemberClick(scope.row.id)"
-                          type="text"
-                          size="small">
-                      {{'成员列表（' + scope.row.member+ '）人'}}
-                  </el-button>
-              </template>
-          </el-table-column>
-          <el-table-column
-                  prop=""
-                  label="api接口权限"
-                  align="center">
-              <template slot-scope="scope">
-                <el-button type="text" size="small" @click="checkPermissionClick(scope.row.id)">查看</el-button>
-                <el-button type="text" size="small" @click="changePermissionClick(scope.row)">修改</el-button>
-
-              </template>
-          </el-table-column>
-          <el-table-column
-                  prop=""
-                  label="前端权限"
-                  align="center">
-              <template slot-scope="scope">
-                  <el-button type="text" size="small" @click="showGroupMenus(scope.row.id)">查看</el-button>
-                  <el-button type="text" size="small" @click="changeGroupMenus(scope.row.id)">修改</el-button>
-              </template>
-          </el-table-column>
-          <el-table-column
-                  prop=""
-                  label="操作"
-                  align="center">
-              <template slot-scope="scope">
-                  <el-button type="text" size="small" @click="deleteGroupClick(scope.row)">删除</el-button>
-              </template>
-          </el-table-column>
-      </el-table>
-      <div class="text-center" v-show="total_num>=10">
-        <el-pagination
-                background
-                @current-change="paginationChange"
-                layout="total, prev, pager, next, jumper"
-                :current-page.sync="page"
-                :total="total_num">
-        </el-pagination>
-      </div>
-      <el-dialog title="添加角色" :visible.sync="addRoleVisible" width="500px">
-        <el-form ref="addRoleForm" :model="addRoleForm" label-width="70px" :rules="addRoleRule">
-            <el-form-item label="角色名" prop="name">
-                <el-input v-model="addRoleForm.name" placeholder="请输入角色名" ></el-input>
-            </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-            <el-button @click="addRoleVisible = false">取 消</el-button>
-            <el-button type="primary" @click="submitAddRoleClick">确 定</el-button>
-        </div>
-      </el-dialog>
-      <el-dialog title="成员列表" :visible.sync="groupMemberListVisible">
-        <el-row :gutter="24">
-          <el-col :span="12" >
-            <el-input placeholder="搜索" v-model="groupMemberSearchKey" @keyup.enter.native="groupMemberSearchClick">
-              <el-button slot="append" icon="el-icon-search" @click="groupMemberSearchClick"></el-button>
-            </el-input>
-          </el-col>
-        </el-row>
-        <el-table
-          v-loading="groupMemberLoading"
-          element-loading-text="拼命加载中"
-          :data="groupMemberListData"
-          border
-          class="table">
-          <el-table-column
-            prop="username"
-            label="用户名"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="姓名"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="email"
-            label="邮件"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="ncfgroupuser.title"
-            label="上次登陆时间"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop=""
-            label="操作"
-            align="center">
-            <template slot-scope="scope">
-              <el-button
-                @click="groupMemberDeleteClick(scope.row)"
-                type="text"
-                size="small">删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="text-center" v-show="groupMemberTotal>=10">
-          <el-pagination
-            background
-            @current-change="groupMemberPaginationChange"
-            layout="total, prev, pager, next, jumper"
-            :current-page.sync="groupMemberPage"
-            :total="groupMemberTotal">
-          </el-pagination>
-        </div>
-      </el-dialog>
-      <el-dialog title="查看权限" :visible.sync="checkPermissionVisible">
-        <el-table
-            v-loading="permissionloading"
-            element-loading-text="拼命加载中"
-            :data="permissionList"
-            border
-            height="300">
-          <el-table-column
-            type="index"
-            width="50"
-            label="序号"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            label="权限名"
-            align="center">
-            <template slot-scope="scope">
-              {{ scope.row.content_type.app_label + '.' + scope.row.codename }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="描述"
-            align="center">
-          </el-table-column>
-        </el-table>
-      </el-dialog>
-      <el-dialog title="修改权限" :visible.sync="modifyGroupPermissionVisible" width="1000px">
-        <el-row :gutter="24">
-          <el-col :span="12" >
-            <el-input placeholder="搜索" v-model="modifyGroupPermissionSearchKey" @keyup.enter.native="modifyGroupPermissionSearchClick">
-              <el-button slot="append" icon="el-icon-search" @click="modifyGroupPermissionSearchClick"></el-button>
-            </el-input>
-          </el-col>
-        </el-row>
-        <el-table
-          v-loading="modifyGroupPermissionLoading"
-          element-loading-text="拼命加载中"
-          :data="modifyGroupPermissionData"
-          border
-          class="table">
-          <el-table-column
-            prop="content_type.app_label"
-            label="app"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="content_type.model"
-            label="model"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="codename"
-            label="code name"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="描述"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop=""
-            label="操作"
-            align="center">
-            <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.status"
-                @change="modifyGroupPermissionChangeStatus(scope.row)">
-              </el-switch>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="text-center" v-show="modifyGroupPermissionTotal>=10">
-          <el-pagination
-            background
-            @current-change="modifyGroupPermissionPaginationChange"
-            layout="total, prev, pager, next, jumper"
-            page-size="6"
-            :current-page.sync="modifyGroupPermissionPage"
-            :total="modifyGroupPermissionTotal">
-          </el-pagination>
-        </div>
-      </el-dialog>
-      <el-dialog title="查看前端菜单" :visible.sync="groupMenuVisible" width="400px">
-        <el-tree
-          :data="menuData"
-          :show-checkbox="menuFlag"
-          default-expand-all
-          node-key="id"
-          ref="tree"
-          highlight-current
-          :default-checked-keys="defaultCheckedKeys"
-          :render-content="renderContent"
-          >
-        </el-tree>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="groupMenuVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitGroupMenus">确 定</el-button>
-        </span>
-      </el-dialog>
+    </el-dialog>
+    <el-dialog
+      title="成员列表"
+      center
+      :visible.sync="groupMemberListVisible">
+      <group-member-table
+        v-bind:groupMemberSearchKey="groupMemberSearchKey"
+        v-bind:groupMemberListData="groupMemberListData"
+        v-bind:groupMemberLoading="groupMemberLoading"
+        v-bind:groupMemberPage="groupMemberPage"
+        v-bind:groupMemberTotal="groupMemberTotal"
+        @groupMemberSearchClick="groupMemberSearchClick"
+        @groupMemberDeleteClick="groupMemberDeleteClick"
+        @groupMemberPaginationChange="groupMemberPaginationChange">
+      </group-member-table>
+    </el-dialog>
+    <el-dialog
+      title="查看权限"
+      center
+      :visible.sync="checkPermissionVisible">
+      <permission-table
+        v-bind:permissionloading="permissionloading"
+        v-bind:permissionList="permissionList">
+      </permission-table>
+    </el-dialog>
+    <el-dialog
+      title="修改权限"
+      center
+      width="55%"
+      :visible.sync="modifyGroupPermissionVisible" >
+      <permission-change-table
+        v-bind:modify-group-permission-loading="modifyGroupPermissionLoading"
+        v-bind:modify-group-permission-search-key="modifyGroupPermissionSearchKey"
+        v-bind:modify-group-permission-total="modifyGroupPermissionTotal"
+        v-bind:modifyGroupPermissionPage="modifyGroupPermissionPage"
+        v-bind:modify-group-permission-data="modifyGroupPermissionData"
+        @modifyGroupPermissionSearchClick="modifyGroupPermissionSearchClick"
+        @modifyGroupPermissionChangeStatus="modifyGroupPermissionChangeStatus"
+        @modifyGroupPermissionPaginationChange="modifyGroupPermissionPaginationChange">
+      </permission-change-table>
+    </el-dialog>
+    <el-dialog
+      title="查看前端菜单"
+      center
+      :visible.sync="groupMenuVisible"
+      width="400px">
+      <el-tree
+        :data="menuData"
+        :show-checkbox="menuFlag"
+        default-expand-all
+        node-key="id"
+        ref="tree"
+        highlight-current
+        :default-checked-keys="defaultCheckedKeys"
+        :render-content="renderContent">
+      </el-tree>
+      <span
+        slot="footer"
+        class="dialog-footer">
+        <el-button
+          size="small"
+          type="primary"
+          @click="submitGroupMenus">
+          确 定
+        </el-button>
+        <el-button
+          size="small"
+          @click="groupMenuVisible = false">
+          取 消
+        </el-button>
+      </span>
+    </el-dialog>
     </div>
 </template>
 
 <script>
-import { getGroupsList, addRole, getGroupPermissionsList, deleteGroup, getGroupMenuList, updateGroupMenu, getGroupMembers, deleteGroupMember, deleteGroupPermissions, updateGroupPermissions } from '@/api/users'
+import { getGroupsList, addRole,
+  getGroupPermissionsList, deleteGroup,
+  getGroupMenuList, updateGroupMenu,
+  getGroupMembers, deleteGroupMember,
+  deleteGroupPermissions, updateGroupPermissions } from '@/api/users'
+import GroupMemberTable from './groups/GroupMemberTable'
+import PermissionTable from './groups/PermissionTable'
+import PermissionChangeTable from './groups/PermissionChangeTable'
+
 export default {
+  components: { PermissionChangeTable, GroupMemberTable, PermissionTable },
   data() {
     return {
       groupList: [],
@@ -392,7 +377,6 @@ export default {
         this.groupMenuVisible = false
         return
       }
-      console.log(this.$refs.tree.getCheckedKeys())
       updateGroupMenu(this.menuModifyData.gid, { mid: this.$refs.tree.getCheckedKeys() }).then(res => {
         this.groupMenuVisible = false
         this.$message({
@@ -402,6 +386,7 @@ export default {
       })
     },
     fetchGroupMemberList() {
+      console.log('fetchGroupMemberList')
       this.groupMemberLoading = true
       getGroupMembers(this.groupMemberGID, { page: this.groupMemberPage, username: this.groupMemberSearchKey }).then(res => {
         this.groupMemberListData = res.results
@@ -409,8 +394,9 @@ export default {
         this.groupMemberLoading = false
       })
     },
-    groupMemberSearchClick() {
+    groupMemberSearchClick(data) {
       this.groupMemberPage = 1
+      this.groupMemberSearchKey = data
       this.fetchGroupMemberList()
     },
     groupMemberPaginationChange(val) {
@@ -419,8 +405,8 @@ export default {
     },
     groupMemberDeleteClick(row) {
       this.$confirm('此操作将删除组成员 “' + row.name + '” , 是否继续?', '提示', {
-        confirmButtonText: '确定',
         cancelButtonText: '取消',
+        confirmButtonText: '确定',
         type: 'warning'
       }).then(() => {
         deleteGroupMember(this.groupMemberGID, { uid: row.id }).then(res => {
@@ -441,7 +427,8 @@ export default {
         this.modifyGroupPermissionLoading = false
       })
     },
-    modifyGroupPermissionSearchClick() {
+    modifyGroupPermissionSearchClick(val) {
+      this.modifyGroupPermissionSearchKey = val
       this.modifyGroupPermissionPage = 1
       this.fetchModifyGroupPermissionData()
     },
@@ -466,3 +453,6 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+</style>

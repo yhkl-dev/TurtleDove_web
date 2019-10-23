@@ -98,7 +98,7 @@
             this.workOrderOperationCode = res.code
           }
         )
-        getTemplateWorkOrderModelList(params).then(
+        getTemplateWorkOrderModelList({ page: 1, page_size: 100 }).then(
           res => {
             this.workOrderModelList = res.results
           }

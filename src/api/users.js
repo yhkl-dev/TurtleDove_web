@@ -23,13 +23,31 @@ export function addUser(params) {
     data: params
   })
 }
-export function updateUser(userid, params) {
+
+export function updateUserPass(userid, params) {
   return request({
-    url: '/users/' + userid + '/',
+    url: '/userreg/' + userid + '/',
     method: 'put',
     data: params
   })
 }
+
+export function updateUser(userid, params) {
+  return request({
+    url: '/userreg/' + userid + '/',
+    method: 'put',
+    data: params
+  })
+}
+
+export function updateUserStatus(userid, params) {
+  return request({
+    url: '/userStatus/' + userid + '/',
+    method: 'put',
+    data: params
+  })
+}
+
 export function getUserGroupsList(uid, params) {
   return request({
     url: '/usergroups/' + uid + '/',
